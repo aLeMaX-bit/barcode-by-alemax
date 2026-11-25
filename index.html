@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07090f">
+<meta name="color-scheme" content="dark">
+<title>Barcode by aLeMaX</title>
+<style>
+:root{
+  --bg:#07090f;--bg2:#0d1119;--surf:#131824;--surf2:#1b2234;--line:#262f45;
+  --tx:#eef1f8;--mut:#8b95ab;--a1:#7557ff;--a2:#2f8bff;--cy:#22d3ee;--danger:#ff7a8d;
+  --grad:linear-gradient(135deg,var(--a1),var(--a2));
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{
+  display:flex;flex-direction:column;height:100dvh;overflow:hidden;overscroll-behavior:none;
+  background:
+    radial-gradient(900px 480px at 85% -8%,#1c1446 0,transparent 62%),
+    radial-gradient(700px 420px at -10% 108%,#062f3b 0,transparent 58%),
+    var(--bg);
+  color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-user-select:none;user-select:none;
+}
+input,textarea{-webkit-user-select:text;user-select:text}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation}
+.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* ---------- Header ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;
+  padding:calc(env(safe-area-inset-top,0px) + 12px) 18px 6px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:40px;height:40px;border-radius:13px;background:var(--grad);display:grid;place-items:center;
+  box-shadow:0 6px 20px -4px rgba(117,87,255,.6)}
+.logo .i{color:#fff}
+.brand b{display:block;font-size:17px;letter-spacing:.2px}
+.brand small{display:block;font-size:12px;font-weight:600;
+  background:linear-gradient(90deg,#a99bff,var(--cy));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pill{font-size:12px;font-weight:600;color:var(--cy);background:rgba(34,211,238,.1);
+  border:1px solid rgba(34,211,238,.25);padding:6px 12px;border-radius:99px}
+.pill:empty{display:none}
+
+/* ---------- Stage ---------- */
+#stage{flex:1;min-height:0;overflow-y:auto;padding:6px 16px 16px;display:flex;flex-direction:column;scrollbar-width:none}
+#stage::-webkit-scrollbar{display:none}
+.wrap{margin-block:auto;display:flex;flex-direction:column;gap:14px}
+#out{display:flex;flex-direction:column;gap:16px}
+#err{display:none;color:var(--danger);background:rgba(255,122,141,.1);border:1px solid rgba(255,122,141,.3);
+  border-radius:14px;padding:10px 14px;font-size:13px}
+.bc{position:relative;background:#fff;border-radius:22px;padding:16px 14px 14px;
+  box-shadow:0 18px 50px -14px rgba(117,87,255,.55),0 0 0 1px rgba(255,255,255,.08)}
+.bc canvas{display:block;width:100%;height:auto}
+.bc .idx{position:absolute;top:8px;left:12px;font-size:11px;font-weight:700;color:#7a86a0}
+.bc .cap{margin-top:8px;text-align:center;font-size:12px;color:#7a86a0}
+.bc .cacts{display:flex;gap:8px;margin-top:12px}
+.bc .cacts button{flex:1;height:48px;border-radius:14px;background:#eef1f8;color:#10141d;font-weight:700;font-size:14px;
+  display:flex;align-items:center;justify-content:center;gap:8px}
+.bc .cacts button:active{background:#dfe4f0}
+.empty{text-align:center;color:var(--mut);padding:24px 20px}
+.empty .art{width:96px;height:96px;margin:0 auto 18px;border-radius:30px;display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(117,87,255,.18),rgba(47,139,255,.1));border:1px solid var(--line)}
+.empty .art .i{width:46px;height:46px;color:#a99bff;stroke-width:1.5}
+.empty h2{margin:0 0 6px;font-size:18px;color:var(--tx)}
+.empty p{margin:0;font-size:14px;line-height:1.5}
+
+/* ---------- History ---------- */
+#histv{flex:1}
+.hrow{display:flex;align-items:center;gap:6px;background:var(--surf);border:1px solid var(--line);
+  border-radius:18px;margin-bottom:10px;padding:4px 4px 4px 4px}
+.hrow .open{flex:1;min-width:0;display:flex;align-items:center;gap:12px;text-align:left;padding:10px;border-radius:14px;min-height:60px}
+.hrow .open:active{background:var(--surf2)}
+.hrow .ico{width:40px;height:40px;border-radius:12px;background:var(--surf2);display:grid;place-items:center;color:#a99bff;flex:none}
+.hrow .tx{min-width:0}
+.hrow .tx b{display:block;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hrow .tx small{color:var(--mut);font-size:12px}
+.hrow .del{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;color:var(--mut)}
+.hrow .del:active{background:rgba(255,122,141,.15);color:var(--danger)}
+.clrall{width:100%;height:52px;border-radius:16px;border:1px solid rgba(255,122,141,.35);color:var(--danger);font-weight:600;margin-top:6px}
+
+/* ---------- Dock (bawah, terjangkau ibu jari) ---------- */
+.dock{background:rgba(13,17,25,.92);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  border-top:1px solid var(--line);border-radius:26px 26px 0 0;padding:14px 14px 0;
+  box-shadow:0 -12px 40px rgba(0,0,0,.45)}
+.hint{font-size:12px;color:var(--mut);margin:0 4px 8px}
+.typerow{display:flex;align-items:center;gap:10px;margin:0 0 8px}
+.typerow .hint{margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+.chip{display:flex;align-items:center;gap:8px;height:44px;padding:0 12px 0 14px;border-radius:99px;flex:none;max-width:62%;
+  background:var(--surf);border:1px solid var(--line);color:var(--tx);font-weight:700;font-size:14px}
+.chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip .i{width:18px;height:18px;color:#a99bff}
+.chip:active{background:var(--surf2)}
+#tsheet .panel{max-height:84dvh;display:flex;flex-direction:column}
+.tsearch{display:flex;align-items:center;gap:10px;background:var(--surf);border:1.5px solid var(--line);border-radius:16px;
+  padding:0 14px;height:50px;margin:4px 0 6px;color:var(--mut)}
+.tsearch:focus-within{border-color:var(--a1)}
+.tsearch input{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--tx);font-size:16px;font-family:inherit}
+.tlist{overflow-y:auto;margin:0 -20px;padding:0 20px 8px;flex:1;min-height:0}
+.tg{font-size:12px;font-weight:700;letter-spacing:.6px;color:var(--cy);text-transform:uppercase;margin:14px 2px 6px}
+.trow{display:flex;align-items:center;gap:2px;border-radius:16px;margin-bottom:4px}
+.trow.on{background:rgba(117,87,255,.18)}
+.trow .sel{flex:1;min-width:0;text-align:left;padding:10px 12px;min-height:60px;border-radius:16px;display:flex;flex-direction:column;justify-content:center;gap:2px}
+.trow .sel:active{background:var(--surf2)}
+.trow .sel b{font-size:16px}
+.trow .sel small{color:var(--mut);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trow .st{width:54px;height:54px;display:grid;place-items:center;color:#5d677d;border-radius:14px;flex:none}
+.trow .st.def{color:#ffd24a}
+.trow .st.def .i{fill:#ffd24a}
+.badge{font-size:10px;font-weight:700;color:#ffd24a;background:rgba(255,210,74,.12);border-radius:99px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+.field{display:flex;align-items:flex-end;gap:6px;background:var(--surf);border:1.5px solid var(--line);
+  border-radius:18px;padding:0 6px 0 16px;min-height:58px;transition:border-color .15s,box-shadow .15s}
+.field:focus-within{border-color:var(--a1);box-shadow:0 0 0 4px rgba(117,87,255,.18)}
+.field input,.field textarea{flex:1;min-width:0;background:transparent;border:0;outline:0;color:var(--tx);
+  font:inherit;font-size:18px;padding:16px 0;resize:none}
+.field textarea{max-height:120px;line-height:1.35}
+.field input::placeholder,.field textarea::placeholder{color:#5d677d}
+.field .x{width:46px;height:46px;margin-bottom:6px;border-radius:14px;display:grid;place-items:center;color:var(--mut);flex:none}
+.field .x:active{background:var(--surf2)}
+.acts{display:flex;gap:8px;margin-top:10px}
+.primary{flex:1;min-width:0;white-space:nowrap;height:58px;border-radius:18px;background:var(--grad);color:#fff;font-weight:700;font-size:16.5px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 10px 26px -8px rgba(117,87,255,.8)}
+.primary:active{transform:scale(.98);filter:brightness(1.1)}
+.ib{width:58px;flex:none;height:58px;border-radius:18px;background:var(--surf);border:1px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:10.5px;color:#c9d0e0;font-weight:600}
+.ib .i{width:21px;height:21px}
+.ib:active{background:var(--surf2)}
+.nav{display:grid;grid-template-columns:repeat(3,1fr);margin-top:8px;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 6px)}
+.nav button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0 4px;font-size:12px;font-weight:600;color:var(--mut)}
+.nav .pl{width:62px;height:32px;border-radius:99px;display:grid;place-items:center;transition:background .18s}
+.nav button.on{color:#fff}
+.nav button.on .pl{background:rgba(117,87,255,.28);color:#c9bfff}
+
+/* mode switching */
+body[data-mode=hist] .compose{display:none}
+body[data-mode=hist] #out{display:none}
+body:not([data-mode=hist]) #histv{display:none}
+body[data-mode=batch] #t{display:none}
+body:not([data-mode=batch]) #b{display:none}
+body:not([data-mode=batch]) .only-batch{display:none}
+
+/* ---------- Sheet ---------- */
+.sheet{position:fixed;inset:0;z-index:20;visibility:hidden}
+.sheet .scrim{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .2s}
+.sheet .panel{position:absolute;left:0;right:0;bottom:0;background:var(--bg2);border-top:1px solid var(--line);
+  border-radius:28px 28px 0 0;padding:10px 20px calc(env(safe-area-inset-bottom,0px) + 20px);
+  transform:translateY(100%);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.sheet.open{visibility:visible}
+.sheet.open .scrim{opacity:1}
+.sheet.open .panel{transform:none}
+.grab{width:44px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 14px}
+.panel h3{margin:0 0 8px;font-size:18px}
+.slh{display:flex;justify-content:space-between;color:var(--mut);font-size:14px;margin-top:10px}
+.slh b{color:var(--tx)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:48px;background:transparent;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:99px;
+  background:linear-gradient(90deg,var(--a1) var(--p,50%),var(--surf2) var(--p,50%))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:#fff;
+  margin-top:-11px;box-shadow:0 2px 10px rgba(0,0,0,.5)}
+.panel .primary{width:100%;flex:none;margin-top:10px}
+
+/* toast */
+#toast{position:fixed;left:50%;transform:translateX(-50%) translateY(10px);opacity:0;pointer-events:none;z-index:30;
+  background:#222a3d;border:1px solid var(--line);color:#fff;padding:12px 18px;border-radius:99px;font-size:14px;font-weight:600;
+  max-width:92%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.5);transition:opacity .2s,transform .2s}
+#toast.show{opacity:1;transform:translateX(-50%)}
+</style>
+</head>
+<body data-mode="single">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-bar" viewBox="0 0 24 24"><path d="M4 5v14M7.5 5v14M11 5v14M14 5v14M17.5 5v14M20 5v14"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-dl" viewBox="0 0 24 24"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.6M8.2 13.2l7.6 4.6"/></symbol>
+  <symbol id="i-sl" viewBox="0 0 24 24"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5l8.5 4.7-8.5 4.8-8.5-4.8z"/><path d="M3.5 12.5l8.5 4.8 8.5-4.8M3.5 16.5L12 21.3l8.5-4.8"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15M10 7V4.5h4V7M6.5 7l.9 12.5h9.2L17.5 7"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.6l2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="brand">
+    <div class="logo"><svg class="i"><use href="#i-bar"/></svg></div>
+    <div><b>Barcode</b><small>by aLeMaX</small></div>
+  </div>
+  <div class="pill" id="cnt"></div>
+</header>
+
+<section id="stage">
+  <div class="wrap">
+    <div id="err"></div>
+    <div id="out"></div>
+    <div id="histv"></div>
+  </div>
+</section>
+
+<div class="dock" id="dock">
+  <div class="compose">
+    <div class="typerow">
+      <button class="chip" id="typeBtn" aria-label="Pilih jenis barcode"><svg class="i"><use href="#i-bar"/></svg><span id="typeName">Code 128</span><svg class="i"><use href="#i-chev"/></svg></button>
+      <p class="hint" id="fmt"></p>
+    </div>
+    <div class="field">
+      <input id="t" type="text" placeholder="Ketik teks atau angka…" autocomplete="off" autocapitalize="off" enterkeyhint="done">
+      <textarea id="b" rows="1" placeholder="12345, ABC-01 998877 XYZ" autocomplete="off"></textarea>
+      <button class="x" id="clear" aria-label="Hapus isi"><svg class="i"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="acts">
+      <button class="primary" id="save"><svg class="i"><use href="#i-dl"/></svg><span id="saveLbl">Simpan</span></button>
+      <button class="ib" id="share" aria-label="Bagikan"><svg class="i"><use href="#i-share"/></svg>Bagikan</button>
+      <button class="ib only-batch" id="merge" aria-label="Gabung jadi satu gambar"><svg class="i"><use href="#i-layers"/></svg>Gabung</button>
+      <button class="ib" id="cfg" aria-label="Pengaturan"><svg class="i"><use href="#i-sl"/></svg>Atur</button>
+    </div>
+  </div>
+  <nav class="nav">
+    <button data-m="single" class="on"><span class="pl"><svg class="i"><use href="#i-bar"/></svg></span>Tunggal</button>
+    <button data-m="batch"><span class="pl"><svg class="i"><use href="#i-grid"/></svg></span>Batch</button>
+    <button data-m="hist"><span class="pl"><svg class="i"><use href="#i-clock"/></svg></span>Riwayat</button>
+  </nav>
+</div>
+
+<div class="sheet" id="sheet" aria-hidden="true">
+  <div class="scrim" id="scrim"></div>
+  <div class="panel">
+    <div class="grab"></div>
+    <h3>Pengaturan barcode</h3>
+    <div class="slh"><span>Lebar garis</span><b id="wv">3</b></div>
+    <input id="w" type="range" min="1" max="6" value="3">
+    <div class="slh"><span>Tinggi</span><b id="hv">120</b></div>
+    <input id="h" type="range" min="60" max="300" step="10" value="120">
+    <p class="hint" style="margin:8px 0 0">Tinggi hanya berlaku untuk barcode 1D. Pada barcode 2D, ukuran mengikuti lebar garis.</p>
+    <button class="primary" id="done">Selesai</button>
+  </div>
+</div>
+
+<div class="sheet" id="tsheet" aria-hidden="true">
+  <div class="scrim" id="tscrim"></div>
+  <div class="panel">
+    <div class="grab"></div>
+    <h3>Jenis barcode</h3>
+    <p class="hint" style="margin:0 0 6px">Ketuk jenis untuk dipakai. Ketuk ★ untuk menjadikannya default.</p>
+    <label class="tsearch"><svg class="i"><use href="#i-search"/></svg><input id="tq" type="search" placeholder="Cari jenis barcode…" autocomplete="off"></label>
+    <div class="tlist" id="tlist"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="bwip-js-min.js"></script>
+<script>
+const P="212222 222122 222221 121223 121322 131222 122213 122312 132212 221213 221312 231212 112232 122132 122231 113222 123122 123221 223211 221132 221231 213212 223112 312131 311222 321122 321221 312212 322112 322211 212123 212321 232121 111323 131123 131321 112313 132113 132311 211313 231113 231311 112133 112331 132131 113123 113321 133121 313121 211331 231131 213113 213311 213131 311123 311321 331121 312113 312311 332111 314111 221411 431111 111224 111422 121124 121421 141122 141221 112214 112412 122114 122411 142112 142211 241211 221114 413111 241112 134111 111242 121142 121241 114212 124112 124211 411212 421112 421211 212141 214121 412121 111143 111341 131141 114113 114311 411113 411311 113141 114131 311141 411131 211412 211214 211232 2331112".split(" ");
+
+function encode(s){
+  for(const ch of s){const c=ch.charCodeAt(0);if(c<32||c>126)throw new Error("Karakter tidak didukung: "+ch);}
+  const codes=[];let mode=null;let i=0;
+  const digRun=p=>{let n=0;while(p+n<s.length&&s[p+n]>="0"&&s[p+n]<="9")n++;return n;};
+  while(i<s.length){
+    const run=digRun(i);
+    const useC=run>=4||(run>=2&&run===s.length-i&&i===0);
+    if(useC){
+      if(mode===null)codes.push(105);else if(mode!=="C")codes.push(99);
+      mode="C";
+      const n=run-(run%2);
+      for(let k=0;k<n;k+=2)codes.push(parseInt(s.substr(i+k,2),10));
+      i+=n;
+    }else{
+      if(mode===null)codes.push(104);else if(mode!=="B")codes.push(100);
+      mode="B";
+      codes.push(s.charCodeAt(i)-32);i++;
+    }
+  }
+  let sum=codes[0];
+  for(let k=1;k<codes.length;k++)sum+=codes[k]*k;
+  codes.push(sum%103,106);
+  return codes;
+}
+
+const $=id=>document.getElementById(id);
+const tap=()=>{try{navigator.vibrate&&navigator.vibrate(10);}catch(e){}};
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+let mode="single",items=[],toastT;
+const isBatch=()=>mode==="batch";
+
+/* ---------- Gambar barcode ---------- */
+function drawCode128(cv,s){
+  const mod=+$("w").value,bh=+$("h").value,quiet=10*mod,fs=18+mod*2;
+  const codes=encode(s);
+  const pat=codes.map(c=>P[c]).join("");
+  let total=0;for(const d of pat)total+=+d;
+  const wf=10+mod*2;
+  const W=total*mod+quiet*2,H=bh+fs+24+wf+10;
+  cv.width=W;cv.height=H;
+  const ctx=cv.getContext("2d");
+  ctx.fillStyle="#fff";ctx.fillRect(0,0,W,H);
+  ctx.fillStyle="#000";
+  let x=quiet,bar=true;
+  for(const d of pat){const w=+d*mod;if(bar)ctx.fillRect(x,8,w,bh);x+=w;bar=!bar;}
+  ctx.font=fs+"px monospace";ctx.textAlign="center";
+  ctx.fillText(s,W/2,bh+8+fs+4,W-10);
+  ctx.font="italic "+wf+"px sans-serif";ctx.fillStyle="#666";ctx.textAlign="center";
+  ctx.fillText("by aLeMaX",W/2,H-8);
+}
+/* ---------- Jenis barcode ---------- */
+const upper=s=>s.toUpperCase();
+const evenPad=s=>/^\d+$/.test(s)&&s.length%2?"0"+s:s;
+const G1="1D · Umum",G2="1D · Ritel & produk",G3="1D · Industri & khusus",G4="2D";
+const mk=(g,d,arr)=>arr.map(o=>Object.assign({g:g,d:d},o));
+const TYPES=[].concat(
+ mk(G1,"1d",[
+  {id:"code128",n:"Code 128",ex:"ABC-12345",h:"huruf, angka, simbol (ASCII)",own:1},
+  {id:"gs1-128",n:"GS1-128",ex:"(01)09506000134352(17)261231",h:"kode AI dalam kurung, mis. (01)…"},
+  {id:"code39",n:"Code 39",ex:"CODE-39",h:"A–Z, 0–9, spasi, - . $ / + %",prep:upper},
+  {id:"code39ext",n:"Code 39 Extended",ex:"Code-39 Ext",h:"semua karakter ASCII"},
+  {id:"code93",n:"Code 93",ex:"CODE93",h:"A–Z, 0–9, spasi, - . $ / + %",prep:upper},
+  {id:"code93ext",n:"Code 93 Extended",ex:"Code93 Ext",h:"semua karakter ASCII"},
+  {id:"rationalizedCodabar",k:"codabar",n:"Codabar",ex:"A123456A",h:"angka & - $ : / . +, awal/akhir A–D",prep:upper},
+  {id:"interleaved2of5",k:"itf",n:"ITF (Interleaved 2 of 5)",ex:"12345670",h:"angka saja (otomatis digenapkan)",prep:evenPad},
+  {id:"itf14",n:"ITF-14",ex:"1234567890123",h:"13 atau 14 digit"}
+ ]),
+ mk(G2,"1d",[
+  {id:"ean13",n:"EAN-13",ex:"5901234123457",h:"12 atau 13 digit"},
+  {id:"ean8",n:"EAN-8",ex:"96385074",h:"7 atau 8 digit"},
+  {id:"upca",n:"UPC-A",ex:"012345678905",h:"11 atau 12 digit"},
+  {id:"upce",n:"UPC-E",ex:"01234565",h:"7 atau 8 digit"},
+  {id:"isbn",n:"ISBN",ex:"978-1-56581-231-4",h:"10/13 digit, boleh pakai -"},
+  {id:"issn",n:"ISSN",ex:"0311-175X",h:"8 karakter (2 × 4)"},
+  {id:"ismn",n:"ISMN",ex:"979-0-2600-0043-8",h:"notasi musik, 13 digit"},
+  {id:"ean5",n:"EAN-5 (tambahan)",ex:"90200",h:"5 digit"},
+  {id:"ean2",n:"EAN-2 (tambahan)",ex:"05",h:"2 digit"}
+ ]),
+ mk(G3,"1d",[
+  {id:"code2of5",n:"Industrial 2 of 5",ex:"12345678",h:"angka saja"},
+  {id:"matrix2of5",n:"Matrix 2 of 5",ex:"12345678",h:"angka saja"},
+  {id:"code11",n:"Code 11",ex:"123-4567",h:"angka dan tanda -"},
+  {id:"msi",n:"MSI Plessey",ex:"1234567",h:"angka saja"},
+  {id:"plessey",n:"Plessey",ex:"01234ABCD",h:"angka dan A–F"},
+  {id:"telepen",n:"Telepen",ex:"Telepen123",h:"semua karakter ASCII"},
+  {id:"telepennumeric",n:"Telepen Numeric",ex:"1234567890",h:"angka saja"},
+  {id:"pharmacode",n:"Pharmacode",ex:"117480",h:"angka 3–131070",nt:1},
+  {id:"code32",n:"Code 32 (farmasi Italia)",ex:"01234567",h:"8 digit"},
+  {id:"pzn",n:"PZN (farmasi Jerman)",ex:"1234567",h:"7 atau 8 digit"},
+  {id:"databaromni",n:"GS1 DataBar Omnidirectional",ex:"(01)24012345678905",h:"(01) + 14 digit"},
+  {id:"databarexpanded",n:"GS1 DataBar Expanded",ex:"(01)98898765432106(3202)012345(15)991231",h:"kode AI dalam kurung"},
+  {id:"royalmail",n:"Royal Mail 4-State (RM4SCC)",ex:"LE28HS9Z",h:"huruf & angka",nt:1,nh:1},
+  {id:"postnet",n:"POSTNET",ex:"01234",h:"5, 9, atau 11 digit",nt:1,nh:1},
+  {id:"onecode",n:"USPS Intelligent Mail",ex:"0123456709498765432101234567891",h:"20–31 digit",nt:1,nh:1}
+ ]),
+ mk(G4,"2d",[
+  {id:"qrcode",n:"QR Code",ex:"https://example.com",h:"teks atau tautan apa saja"},
+  {id:"microqrcode",n:"Micro QR Code",ex:"12345",h:"teks pendek"},
+  {id:"datamatrix",n:"Data Matrix",ex:"DataMatrix-123",h:"teks atau angka"},
+  {id:"gs1datamatrix",n:"GS1 Data Matrix",ex:"(01)09506000134352(17)261231",h:"kode AI dalam kurung"},
+  {id:"azteccode",n:"Aztec Code",ex:"Aztec-123",h:"teks atau angka"},
+  {id:"pdf417",n:"PDF417",ex:"PDF417 contoh teks",h:"teks atau angka"},
+  {id:"hanxin",n:"Han Xin Code",ex:"HanXin-123",h:"teks atau angka"}
+ ])
+);
+const TMAP={};TYPES.forEach(t=>{TMAP[t.id]=t;});
+let defType="code128";
+try{const d=localStorage.getItem("def128");if(d&&TMAP[d])defType=d;}catch(e){}
+let curType=TMAP[defType];
+const fkey=t=>(t.k||t.id).replace(/[^\w]/g,"");
+// 1D: pisah koma/titik/spasi/baris baru. 2D (teks bebas, sering berisi spasi & titik): hanya baris baru.
+const parseBatch=v=>[...new Set((curType.d==="2d"?v.split(/[\r\n]+/):v.split(/[,.\s]+/)).map(x=>x.trim()).filter(Boolean))];
+
+const bwipReady=()=>!!(window.bwipjs&&typeof window.bwipjs.toCanvas==="function");
+async function drawBwip(cv,s){
+  if(!bwipReady()){const e=new Error("NOLIB");e.nolib=true;throw e;}
+  const t=curType,sc=+$("w").value,bh=+$("h").value,two=t.d==="2d";
+  const scale=two?sc*3:sc;
+  const o={bcid:t.id,text:t.prep?t.prep(s):s,scale:scale,paddingwidth:10,paddingheight:10,backgroundcolor:"FFFFFF"};
+  if(!two&&!t.nh)o.height=Math.max(4,bh*25.4/(72*scale));
+  if(!two&&!t.nt){o.includetext=true;o.textxalign="center";}
+  const tmp=document.createElement("canvas");
+  let r=window.bwipjs.toCanvas(tmp,o);
+  if(r&&typeof r.then==="function")r=await r;
+  const src=(r&&r.getContext)?r:tmp;
+  const wf=Math.max(12,Math.round(src.width/24));
+  const W=src.width,H=src.height+wf+14;
+  cv.width=W;cv.height=H;
+  const ctx=cv.getContext("2d");
+  ctx.fillStyle="#fff";ctx.fillRect(0,0,W,H);
+  ctx.drawImage(src,0,0);
+  ctx.font="italic "+wf+"px sans-serif";ctx.fillStyle="#666";ctx.textAlign="center";
+  ctx.fillText("by aLeMaX",W/2,H-8);
+}
+function drawTo(cv,s){return curType.own?Promise.resolve(drawCode128(cv,s)):drawBwip(cv,s);}
+function errText(e){
+  if(e&&e.nolib)return "Pustaka jenis barcode belum termuat, jadi hanya Code 128 yang bisa dipakai.";
+  let m=String((e&&e.message)||e||"");
+  const k=m.indexOf(": ");
+  if(/^bwipp\./.test(m)&&k>0)m=m.slice(k+2);
+  return m.slice(0,140);
+}
+
+const blobOf=cv=>new Promise(r=>cv.toBlob(r,"image/png"));
+const safe=s=>(s.replace(/[^\w-]/g,"_").slice(0,30)||"kode");
+
+/* ---------- Penyimpanan & berbagi ---------- */
+function seq(){
+  let n=0;try{n=+(localStorage.getItem("c128")||0);}catch(e){}
+  n++;try{localStorage.setItem("c128",String(n));}catch(e){}
+  return String(n).padStart(3,"0");
+}
+function toast(msg){
+  const t=$("toast");
+  t.textContent=msg;t.style.bottom=($("dock").offsetHeight+16)+"px";t.classList.add("show");
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2400);
+}
+// Di APK (Capacitor) plugin native tersedia; di browser dipakai cara web biasa.
+const NP=()=>(window.Capacitor&&window.Capacitor.Plugins)||{};
+function toB64(b){return new Promise((res,rej)=>{const f=new FileReader();f.onload=()=>res(String(f.result).split(",")[1]);f.onerror=rej;f.readAsDataURL(b);});}
+async function writeImage(b,name){
+  const pl=NP();
+  if(pl.MediaSaver){
+    try{await pl.MediaSaver.save({data:await toB64(b),name:name});return true;}
+    catch(e){toast("Gagal menyimpan: "+((e&&e.message)||e));return false;}
+  }
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(b);a.download=name;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  return true;
+}
+const where=()=>NP().MediaSaver?"tersimpan di galeri":"diunduh";
+async function saveList(list){
+  if(!list.length){toast("Isi kode dulu");return;}
+  let ok=0;
+  for(const it of list){
+    if(await writeImage(await blobOf(it.canvas),seq()+"_"+fkey(curType)+"_"+safe(it.text)+".png"))ok++;
+    if(!NP().MediaSaver&&list.length>1)await delay(350);
+  }
+  if(ok){toast(ok+" barcode "+where());addHist();}
+}
+async function shareFiles(list){
+  if(!list.length){toast("Isi kode dulu");return;}
+  const pl=NP();
+  if(pl.Share&&pl.Filesystem){
+    try{
+      const uris=[];
+      for(let k=0;k<list.length;k++){
+        const r=await pl.Filesystem.writeFile({path:"share_"+(k+1)+"_"+safe(list[k].text)+".png",data:await toB64(await blobOf(list[k].canvas)),directory:"CACHE"});
+        uris.push(r.uri);
+      }
+      await pl.Share.share({title:"Barcode by aLeMaX",files:uris});addHist();
+    }catch(e){if(!/cancel/i.test(String((e&&e.message)||e)))toast("Gagal membagikan: "+((e&&e.message)||e));}
+    return;
+  }
+  const files=[];
+  for(const it of list)files.push(new File([await blobOf(it.canvas)],safe(it.text)+".png",{type:"image/png"}));
+  try{
+    if(navigator.canShare&&navigator.canShare({files}))await navigator.share({files,title:"Barcode by aLeMaX"});
+    else if(navigator.share)await navigator.share({title:"Barcode by aLeMaX",text:list.map(i=>i.text).join(", ")});
+    else{toast("Bagikan tidak tersedia, gunakan Simpan");return;}
+    addHist();
+  }catch(e){}
+}
+function combined(){
+  const gap=24,pad=16;
+  const W=Math.max(...items.map(i=>i.canvas.width))+pad*2;
+  const H=items.reduce((a,i)=>a+i.canvas.height+gap,pad*2-gap);
+  const c=document.createElement("canvas");c.width=W;c.height=H;
+  const ctx=c.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,W,H);
+  let y=pad;
+  items.forEach(i=>{ctx.drawImage(i.canvas,Math.round((W-i.canvas.width)/2),y);y+=i.canvas.height+gap;});
+  return c;
+}
+
+/* ---------- Tampilan ---------- */
+function btn(label,icon,fn){
+  const b=document.createElement("button");
+  b.innerHTML='<svg class="i" style="width:18px;height:18px"><use href="#'+icon+'"/></svg>';
+  b.append(label);b.onclick=()=>{tap();fn();};return b;
+}
+function emptyEl(){
+  const d=document.createElement("div");d.className="empty";
+  d.innerHTML='<div class="art"><svg class="i"><use href="#i-bar"/></svg></div><h2></h2><p></p>';
+  d.querySelector("h2").textContent=isBatch()?"Mode Batch":"Siap membuat barcode";
+  d.querySelector("p").textContent=isBatch()
+    ?(curType.d==="2d"?"Ketik beberapa teks di bawah, satu per baris. Tiap baris jadi satu barcode.":"Ketik beberapa kode di bawah. Tiap bagian yang dipisah koma, titik, atau spasi jadi satu barcode.")
+    :"Ketik teks atau angka di kolom bawah, barcode muncul otomatis.";
+  return d;
+}
+let rTok=0;
+async function render(){
+  const tok=++rTok;
+  const pw=(+$("w").value-1)/5*100,ph=(+$("h").value-60)/240*100;
+  $("w").style.setProperty("--p",pw+"%");$("h").style.setProperty("--p",ph+"%");
+  $("wv").textContent=$("w").value;$("hv").textContent=$("h").value;
+  const raw=isBatch()?$("b").value:$("t").value;
+  const list=isBatch()?parseBatch(raw):(raw?[raw]:[]);
+  const made=[],bad=[];let lastErr=null;
+  for(const s of list){
+    const cv=document.createElement("canvas");
+    try{await drawTo(cv,s);made.push({text:s,canvas:cv});}catch(e){bad.push(s);lastErr=e;}
+    if(tok!==rTok)return;
+  }
+  if(mode==="hist")return;
+  items=made;
+  const out=$("out");out.innerHTML="";$("err").style.display="none";
+  made.forEach((it,k)=>{
+    const card=document.createElement("div");card.className="bc";
+    if(isBatch()){const ix=document.createElement("div");ix.className="idx";ix.textContent="#"+(k+1);card.appendChild(ix);}
+    card.appendChild(it.canvas);
+    if(isBatch()){
+      const ac=document.createElement("div");ac.className="cacts";
+      ac.append(btn("Simpan","i-dl",()=>saveList([it])),btn("Bagikan","i-share",()=>shareFiles([it])));
+      card.appendChild(ac);
+    }else{
+      const c=document.createElement("div");c.className="cap";c.textContent=curType.n+" · "+it.text.length+" karakter";card.appendChild(c);
+    }
+    out.appendChild(card);
+  });
+  if(!made.length&&!bad.length)out.appendChild(emptyEl());
+  if(bad.length){
+    let msg;
+    if(lastErr&&lastErr.nolib)msg=errText(lastErr);
+    else msg=(isBatch()?"Dilewati: "+bad.join(", ")+". ":"")+errText(lastErr)+" (Format "+curType.n+": "+curType.h+")";
+    $("err").textContent=msg;$("err").style.display="block";
+  }
+  $("cnt").textContent=isBatch()&&made.length?made.length+" barcode":"";
+  $("saveLbl").textContent=isBatch()&&made.length>1?"Simpan semua":"Simpan";
+}
+
+/* ---------- Riwayat ---------- */
+let hist=[];
+try{hist=JSON.parse(localStorage.getItem("hist128")||"[]");}catch(e){}
+hist=hist.map(h=>typeof h==="string"?{v:h,b:false,t:"code128"}:Object.assign({t:"code128"},h));
+function saveHist(){try{localStorage.setItem("hist128",JSON.stringify(hist));}catch(e){}renderHist();}
+function addHist(){
+  const v=(isBatch()?$("b").value:$("t").value).trim();if(!v)return;
+  const b=isBatch(),t=curType.id;
+  hist=[{v:v,b:b,t:t},...hist.filter(h=>!(h.v===v&&h.b===b&&h.t===t))].slice(0,50);saveHist();
+}
+function renderHist(){
+  const el=$("histv");el.innerHTML="";
+  if(!hist.length){
+    const d=document.createElement("div");d.className="empty";
+    d.innerHTML='<div class="art"><svg class="i"><use href="#i-clock"/></svg></div><h2>Belum ada riwayat</h2><p>Kode yang kamu simpan atau bagikan akan muncul di sini.</p>';
+    el.appendChild(d);return;
+  }
+  hist.forEach((h,i)=>{
+    const r=document.createElement("div");r.className="hrow";
+    const o=document.createElement("button");o.className="open";
+    o.innerHTML='<div class="ico"><svg class="i"><use href="#'+(h.b?"i-grid":"i-bar")+'"/></svg></div><div class="tx"><b></b><small></small></div>';
+    o.querySelector("b").textContent=h.v.replace(/\s+/g," ");
+    o.querySelector("small").textContent=(h.b?"Batch":"Tunggal")+" · "+(TMAP[h.t]||TMAP.code128).n+" · ketuk untuk membuka";
+    o.onclick=()=>{
+      tap();curType=TMAP[h.t]||TMAP.code128;
+      if(h.b)$("b").value=h.v;else $("t").value=h.v;
+      grow();setMode(h.b?"batch":"single");
+    };
+    const x=document.createElement("button");x.className="del";x.setAttribute("aria-label","Hapus");
+    x.innerHTML='<svg class="i"><use href="#i-trash"/></svg>';
+    x.onclick=()=>{tap();hist.splice(i,1);saveHist();};
+    r.append(o,x);el.appendChild(r);
+  });
+  const c=document.createElement("button");c.className="clrall";c.textContent="Hapus semua riwayat";
+  c.onclick=()=>{tap();hist=[];saveHist();};el.appendChild(c);
+}
+
+/* ---------- Jenis barcode: tampilan ---------- */
+function updateTypeUI(){
+  $("typeName").textContent=curType.n;
+  $("t").placeholder="Contoh: "+curType.ex;
+  $("b").placeholder=curType.ex+(curType.d==="2d"?"":", …");
+  $("fmt").textContent=isBatch()?(curType.d==="2d"?"Pisahkan: baris baru":"Pisahkan: koma, titik, spasi"):curType.h;
+}
+function setType(id){curType=TMAP[id]||TMAP.code128;updateTypeUI();render();}
+function setDefault(id){
+  defType=id;try{localStorage.setItem("def128",id);}catch(e){}
+  toast("Default: "+TMAP[id].n);buildTypes($("tq").value);
+}
+function buildTypes(q){
+  const el=$("tlist");el.innerHTML="";
+  q=(q||"").trim().toLowerCase();let lastG="";
+  TYPES.forEach(t=>{
+    if(q&&!(t.n.toLowerCase().includes(q)||t.id.toLowerCase().includes(q)||t.g.toLowerCase().includes(q)))return;
+    if(t.g!==lastG){const g=document.createElement("div");g.className="tg";g.textContent=t.g;el.appendChild(g);lastG=t.g;}
+    const r=document.createElement("div");r.className="trow"+(t.id===curType.id?" on":"");
+    const s=document.createElement("button");s.className="sel";
+    const b=document.createElement("b");b.textContent=t.n;
+    if(t.id===defType){const bd=document.createElement("span");bd.className="badge";bd.textContent="Default";b.appendChild(bd);}
+    const sm=document.createElement("small");sm.textContent=t.h;
+    s.append(b,sm);s.onclick=()=>{tap();setType(t.id);closeSheet("tsheet");};
+    const st=document.createElement("button");st.className="st"+(t.id===defType?" def":"");
+    st.setAttribute("aria-label","Jadikan default: "+t.n);
+    st.innerHTML='<svg class="i"><use href="#i-star"/></svg>';
+    st.onclick=()=>{tap();setDefault(t.id);};
+    r.append(s,st);el.appendChild(r);
+  });
+  if(!el.children.length){const d=document.createElement("div");d.className="empty";d.innerHTML="<p>Tidak ada jenis yang cocok.</p>";el.appendChild(d);}
+}
+
+/* ---------- Kontrol ---------- */
+function setMode(m){
+  mode=m;document.body.dataset.mode=m;rTok++;
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.m===m));
+  $("stage").scrollTop=0;$("toast").classList.remove("show");
+  updateTypeUI();
+  if(m==="hist"){$("cnt").textContent="";renderHist();}else render();
+}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{tap();setMode(b.dataset.m);});
+function grow(){const b=$("b");b.style.height="auto";b.style.height=Math.min(b.scrollHeight,120)+"px";}
+$("clear").onclick=()=>{tap();const f=isBatch()?$("b"):$("t");f.value="";grow();render();f.focus();};
+$("t").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("t").blur();}});
+$("save").onclick=()=>{tap();saveList(items);};
+$("share").onclick=()=>{tap();shareFiles(isBatch()?items:items.slice(0,1));};
+$("merge").onclick=async()=>{
+  tap();if(!items.length){toast("Isi kode dulu");return;}
+  if(await writeImage(await blobOf(combined()),seq()+"_"+fkey(curType)+"_batch"+items.length+".png")){toast("1 gambar gabungan "+where());addHist();}
+};
+function openSheet(id){tap();$("toast").classList.remove("show");const s=$(id);s.classList.add("open");s.setAttribute("aria-hidden","false");}
+function closeSheet(id){const s=$(id);s.classList.remove("open");s.setAttribute("aria-hidden","true");}
+$("cfg").onclick=()=>openSheet("sheet");$("scrim").onclick=()=>closeSheet("sheet");$("done").onclick=()=>closeSheet("sheet");
+$("typeBtn").onclick=()=>{
+  $("tq").value="";buildTypes("");openSheet("tsheet");
+  setTimeout(()=>{const on=$("tlist").querySelector(".trow.on");if(on)on.scrollIntoView({block:"center"});},60);
+};
+$("tscrim").onclick=()=>closeSheet("tsheet");
+$("tq").addEventListener("input",()=>buildTypes($("tq").value));
+function saveCfg(){try{localStorage.setItem("cfg128",JSON.stringify({w:$("w").value,h:$("h").value}));}catch(e){}}
+try{const c=JSON.parse(localStorage.getItem("cfg128")||"null");if(c){$("w").value=c.w;$("h").value=c.h;}}catch(e){}
+["w","h"].forEach(id=>$(id).addEventListener("input",()=>{saveCfg();render();}));
+$("t").addEventListener("input",render);
+$("b").addEventListener("input",()=>{grow();render();});
+updateTypeUI();renderHist();render();
+</script>
+</body>
+</html>
