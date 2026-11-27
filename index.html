@@ -1,10 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07090f">
-<meta name="color-scheme" content="dark">
 <title>Barcode by aLeMaX</title>
 <style>
 :root{
@@ -164,9 +163,104 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;heigh
   background:#222a3d;border:1px solid var(--line);color:#fff;padding:12px 18px;border-radius:99px;font-size:14px;font-weight:600;
   max-width:92%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.5);transition:opacity .2s,transform .2s}
 #toast.show{opacity:1;transform:translateX(-50%)}
+
+/* ===== v2 ===== */
+.dock{position:relative}
+.handle{display:grid;place-items:center;width:100%;height:22px;margin:-8px 0 4px}
+.handle span{width:42px;height:5px;border-radius:9px;background:var(--line)}
+.dock.min .field,.dock.min .acts{display:none}
+.field textarea{max-height:84px}
+.primary,.ib{min-width:0}
+.primary span{overflow:hidden;text-overflow:ellipsis}
+.ib{width:auto;min-width:58px;padding:0 6px}
+.ib span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body[data-mode=batch] .acts{flex-wrap:wrap}
+body[data-mode=batch] .primary{flex:1 1 100%}
+body[data-mode=batch] .ib{flex:1 1 0;flex-direction:row;gap:8px;height:50px;font-size:13px;padding:0 8px}
+.trow .sel,.hrow .open,.row{text-align:start}
+.typerow .hint{text-align:end}
+.bc .idx{left:auto;inset-inline-start:14px}
+.hint{line-height:1.45}
+
+/* pratinjau */
+#out{display:flex;flex-direction:column;gap:16px}
+body[data-mode=single][data-pv=med] .bc{width:78%;margin:0 auto}
+body[data-mode=single][data-pv=small] .bc{width:56%;margin:0 auto}
+body[data-mode=single][data-pv=small] .bc .cacts{display:none}
+body[data-mode=batch][data-pv=med] .bc canvas{width:72%;margin:0 auto}
+body[data-mode=batch][data-pv=small] #out{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+body[data-mode=batch][data-pv=small] .bc{padding:14px 8px 8px;border-radius:16px}
+body[data-mode=batch][data-pv=small] .bc .cacts,body[data-mode=batch][data-pv=small] .bc .cap{display:none}
+body[data-mode=batch][data-pv=list] #out{gap:8px}
+.bc.row-l{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 12px;border-radius:16px;box-shadow:none}
+.bc.row-l .lt{flex:1;min-width:0;color:#10141d}
+.bc.row-l .lt small{display:block;font-size:11px;font-weight:700;color:#7a86a0}
+.bc.row-l .lt b{display:block;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bc.row-l canvas{width:auto;height:46px;max-width:44%}
+.bc .rm{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#7a86a0;flex:none}
+.bc .rm:active{background:#eef1f8}
+.bc{cursor:pointer}
+.bc.dup{outline:2px solid var(--danger)}
+
+/* pengaturan */
+.panel.scroll{max-height:88dvh;overflow-y:auto}
+.sec{font-size:12px;font-weight:700;letter-spacing:.6px;color:var(--cy);text-transform:uppercase;margin:18px 2px 4px}
+.lbl{font-size:14px;color:var(--mut);margin:10px 2px 6px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1 1 0;min-width:calc(25% - 6px);padding:8px 4px;border-radius:14px;background:var(--surf);border:1.5px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:54px;font-size:14px}
+.seg button b{font-weight:700;text-align:center}
+.seg button small{font-weight:500;font-size:11px;color:var(--mut);text-align:center}
+.seg button.on{border-color:var(--a1);background:rgba(117,87,255,.22)}
+.seg.two button{min-width:calc(50% - 6px)}
+.row{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:0 14px;border-radius:16px;background:var(--surf);
+  border:1px solid var(--line);margin-top:8px;font-size:16px}
+.row>span:first-of-type{flex:1;min-width:0}
+.row small{color:var(--mut);font-size:13px;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .i{color:#a99bff}
+.sw{position:relative;width:52px;height:30px;border-radius:99px;background:var(--surf2);flex:none;transition:background .2s}
+.sw::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .2s}
+.sw.on{background:var(--a1)}
+.sw.on::after{transform:translateX(22px)}
+[dir=rtl] .sw.on::after{transform:translateX(-22px)}
+[dir=rtl] .row .i[style*="i-next"]{transform:scaleX(-1)}
+
+/* bahasa */
+.lrow{display:flex;align-items:center;gap:10px;width:100%;min-height:54px;padding:0 14px;border-radius:14px;margin-bottom:4px;font-size:16px;text-align:start}
+.lrow span{flex:1;min-width:0}
+.lrow small{color:var(--mut);font-size:12px}
+.lrow:active{background:var(--surf2)}
+.lrow.on{background:rgba(117,87,255,.2)}
+.lrow .i{color:#a99bff;width:20px;height:20px}
+#lsheet .panel{max-height:84dvh;display:flex;flex-direction:column}
+
+/* tentang */
+.ab h2{text-align:center;margin:0;font-size:20px}
+.ab .role{text-align:center;color:var(--cy);font-size:13px;font-weight:600;margin:3px 0 12px}
+.av{display:block;width:108px;height:108px;margin:4px auto 12px;border-radius:50%;object-fit:cover;
+  border:3px solid rgba(117,87,255,.7);box-shadow:0 12px 34px -8px rgba(117,87,255,.75)}
+.kv{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:12px 2px;border-bottom:1px solid var(--line);font-size:14px}
+.kv span{color:var(--mut);flex:none}
+.kv a,.kv b{color:var(--tx);text-align:end;min-width:0;overflow-wrap:anywhere;font-weight:600}
+.kv a{color:#9db7ff;text-decoration:none}
+
+/* layar penuh */
+.viewer{position:fixed;inset:0;z-index:40;display:none;flex-direction:column;background:rgba(5,7,12,.97);
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 14px calc(env(safe-area-inset-bottom,0px) + 14px)}
+.viewer.open{display:flex}
+.vbox{flex:1;min-height:0;display:grid;place-items:center;overflow:auto}
+.vcard{background:#fff;border-radius:22px;padding:14px;width:100%}
+.vcard canvas{display:block;width:100%;height:auto;max-height:72dvh;object-fit:contain}
+.vact{display:flex;gap:8px;margin-top:12px}
+.vact .primary{flex:1.4}
+.vact .ib{flex:1;flex-direction:row;gap:8px}
+#toast{z-index:60}
+.bc.sm .idx,body[data-pv=small] .bc .idx{top:4px;font-size:9px}
+
+.pill{max-width:62%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 </head>
-<body data-mode="single">
+<body data-mode="single" data-pv="big">
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-bar" viewBox="0 0 24 24"><path d="M4 5v14M7.5 5v14M11 5v14M14 5v14M17.5 5v14M20 5v14"/></symbol>
@@ -181,6 +275,10 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;heigh
   <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.6l2.5 5.2 5.7.8-4.1 4 1 5.7-5.1-2.7-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/></symbol>
   <symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.6 2.4 3.9 5.2 3.9 8.5s-1.3 6.1-3.9 8.5c-2.6-2.4-3.9-5.2-3.9-8.5S9.4 5.9 12 3.5z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8v.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
 </svg>
 
 <header class="top">
@@ -200,52 +298,122 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;heigh
 </section>
 
 <div class="dock" id="dock">
+  <button class="handle" id="handle" aria-label="Collapse"><span></span></button>
   <div class="compose">
     <div class="typerow">
-      <button class="chip" id="typeBtn" aria-label="Pilih jenis barcode"><svg class="i"><use href="#i-bar"/></svg><span id="typeName">Code 128</span><svg class="i"><use href="#i-chev"/></svg></button>
+      <button class="chip" id="typeBtn"><svg class="i"><use href="#i-bar"/></svg><span id="typeName">Code 128</span><svg class="i"><use href="#i-chev"/></svg></button>
       <p class="hint" id="fmt"></p>
     </div>
     <div class="field">
-      <input id="t" type="text" placeholder="Ketik teks atau angka…" autocomplete="off" autocapitalize="off" enterkeyhint="done">
-      <textarea id="b" rows="1" placeholder="12345, ABC-01 998877 XYZ" autocomplete="off"></textarea>
-      <button class="x" id="clear" aria-label="Hapus isi"><svg class="i"><use href="#i-x"/></svg></button>
+      <input id="t" type="text" autocomplete="off" autocapitalize="off" enterkeyhint="done">
+      <textarea id="b" rows="1" autocomplete="off"></textarea>
+      <button class="x" id="clear" data-i18n-aria="clear"><svg class="i"><use href="#i-x"/></svg></button>
     </div>
     <div class="acts">
-      <button class="primary" id="save"><svg class="i"><use href="#i-dl"/></svg><span id="saveLbl">Simpan</span></button>
-      <button class="ib" id="share" aria-label="Bagikan"><svg class="i"><use href="#i-share"/></svg>Bagikan</button>
-      <button class="ib only-batch" id="merge" aria-label="Gabung jadi satu gambar"><svg class="i"><use href="#i-layers"/></svg>Gabung</button>
-      <button class="ib" id="cfg" aria-label="Pengaturan"><svg class="i"><use href="#i-sl"/></svg>Atur</button>
+      <button class="primary" id="save"><svg class="i"><use href="#i-dl"/></svg><span id="saveLbl"></span></button>
+      <button class="ib" id="share"><svg class="i"><use href="#i-share"/></svg><span data-i18n="share"></span></button>
+      <button class="ib only-batch" id="merge"><svg class="i"><use href="#i-layers"/></svg><span data-i18n="merge"></span></button>
+      <button class="ib" id="cfg"><svg class="i"><use href="#i-sl"/></svg><span data-i18n="cfg"></span></button>
     </div>
   </div>
   <nav class="nav">
-    <button data-m="single" class="on"><span class="pl"><svg class="i"><use href="#i-bar"/></svg></span>Tunggal</button>
-    <button data-m="batch"><span class="pl"><svg class="i"><use href="#i-grid"/></svg></span>Batch</button>
-    <button data-m="hist"><span class="pl"><svg class="i"><use href="#i-clock"/></svg></span>Riwayat</button>
+    <button data-m="single" class="on"><span class="pl"><svg class="i"><use href="#i-bar"/></svg></span><span data-i18n="nav_single"></span></button>
+    <button data-m="batch"><span class="pl"><svg class="i"><use href="#i-grid"/></svg></span><span data-i18n="nav_batch"></span></button>
+    <button data-m="hist"><span class="pl"><svg class="i"><use href="#i-clock"/></svg></span><span data-i18n="nav_hist"></span></button>
   </nav>
 </div>
 
+<!-- Pengaturan -->
 <div class="sheet" id="sheet" aria-hidden="true">
   <div class="scrim" id="scrim"></div>
-  <div class="panel">
+  <div class="panel scroll">
     <div class="grab"></div>
-    <h3>Pengaturan barcode</h3>
-    <div class="slh"><span>Lebar garis</span><b id="wv">3</b></div>
+    <h3 data-i18n="st_title"></h3>
+
+    <div class="sec" data-i18n="st_barcode"></div>
+    <div class="slh"><span data-i18n="st_width"></span><b id="wv">3</b></div>
     <input id="w" type="range" min="1" max="6" value="3">
-    <div class="slh"><span>Tinggi</span><b id="hv">120</b></div>
+    <div class="slh"><span data-i18n="st_height"></span><b id="hv">120</b></div>
     <input id="h" type="range" min="60" max="300" step="10" value="120">
-    <p class="hint" style="margin:8px 0 0">Tinggi hanya berlaku untuk barcode 1D. Pada barcode 2D, ukuran mengikuti lebar garis.</p>
-    <button class="primary" id="done">Selesai</button>
+    <p class="hint" style="margin:6px 2px 0" data-i18n="st_h_note"></p>
+
+    <div class="sec" data-i18n="st_save"></div>
+    <div class="lbl" data-i18n="st_quality"></div>
+    <div class="seg" id="segQ">
+      <button data-v="std"><b data-i18n="q_std"></b><small>1×</small></button>
+      <button data-v="hd"><b data-i18n="q_hd"></b><small>1280 px</small></button>
+      <button data-v="fhd"><b data-i18n="q_fhd"></b><small>1920 px</small></button>
+      <button data-v="uhd"><b data-i18n="q_uhd"></b><small>3840 px</small></button>
+    </div>
+    <div class="lbl" data-i18n="st_format"></div>
+    <div class="seg two" id="segF">
+      <button data-v="png"><b>PNG</b><small data-i18n="f_png"></small></button>
+      <button data-v="jpg"><b>JPG</b><small data-i18n="f_jpg"></small></button>
+    </div>
+
+    <div class="sec" data-i18n="st_view"></div>
+    <div class="seg" id="segV">
+      <button data-v="big"><b data-i18n="v_big"></b></button>
+      <button data-v="med"><b data-i18n="v_med"></b></button>
+      <button data-v="small"><b data-i18n="v_small"></b></button>
+      <button data-v="list"><b data-i18n="v_list"></b></button>
+    </div>
+
+    <button class="row" id="swRow" style="margin-top:16px"><span data-i18n="st_wm"></span><span class="sw" id="sw"></span></button>
+    <button class="row" id="goLang"><svg class="i"><use href="#i-globe"/></svg><span data-i18n="st_lang"></span><small id="langCur"></small><svg class="i" style="width:18px;height:18px"><use href="#i-next"/></svg></button>
+    <button class="row" id="goAbout"><svg class="i"><use href="#i-info"/></svg><span data-i18n="st_about"></span><svg class="i" style="width:18px;height:18px;margin-inline-start:auto"><use href="#i-next"/></svg></button>
+    <button class="primary" id="done" style="width:100%;flex:none;margin-top:16px" data-i18n="done"></button>
   </div>
 </div>
 
+<!-- Jenis barcode -->
 <div class="sheet" id="tsheet" aria-hidden="true">
   <div class="scrim" id="tscrim"></div>
   <div class="panel">
     <div class="grab"></div>
-    <h3>Jenis barcode</h3>
-    <p class="hint" style="margin:0 0 6px">Ketuk jenis untuk dipakai. Ketuk ★ untuk menjadikannya default.</p>
-    <label class="tsearch"><svg class="i"><use href="#i-search"/></svg><input id="tq" type="search" placeholder="Cari jenis barcode…" autocomplete="off"></label>
+    <h3 data-i18n="ts_title"></h3>
+    <p class="hint" style="margin:0 0 6px" data-i18n="ts_hint"></p>
+    <label class="tsearch"><svg class="i"><use href="#i-search"/></svg><input id="tq" type="search" data-i18n-ph="ts_search" autocomplete="off"></label>
     <div class="tlist" id="tlist"></div>
+  </div>
+</div>
+
+<!-- Bahasa -->
+<div class="sheet" id="lsheet" aria-hidden="true">
+  <div class="scrim" id="lscrim"></div>
+  <div class="panel">
+    <div class="grab"></div>
+    <h3 data-i18n="lang_title"></h3>
+    <div class="tlist" id="llist"></div>
+  </div>
+</div>
+
+<!-- Tentang -->
+<div class="sheet" id="asheet" aria-hidden="true">
+  <div class="scrim" id="ascrim"></div>
+  <div class="panel scroll ab">
+    <div class="grab"></div>
+    <img class="av" alt="Ade Haryanto" src="data:image/jpeg;base64,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">
+    <h2>aLeMaX · Ade Haryanto</h2>
+    <div class="role" data-i18n="ab_role"></div>
+    <div class="kv"><span data-i18n="ab_email"></span><a href="mailto:adexo182@gmail.com">adexo182@gmail.com</a></div>
+    <div class="kv"><span data-i18n="ab_version"></span><b>2.0</b></div>
+    <div class="kv"><span data-i18n="ab_license"></span><b data-i18n="ab_license_v"></b></div>
+    <div class="kv"><span data-i18n="ab_source"></span><a href="https://github.com/aLeMaX-bit/barcode-by-alemax" target="_blank" rel="noopener">github.com/aLeMaX-bit/barcode-by-alemax</a></div>
+    <div class="lbl" style="margin-top:14px" data-i18n="ab_third"></div>
+    <p class="hint" style="margin:0 2px;line-height:1.6">bwip-js © Mark Warren · BWIPP © Terry Burton · Capacitor © Ionic — MIT License</p>
+    <p class="hint" style="margin:12px 2px 0;text-align:center">© 2026 aLeMaX (Ade Haryanto)</p>
+    <button class="primary" id="adone" style="width:100%;flex:none;margin-top:14px" data-i18n="done"></button>
+  </div>
+</div>
+
+<!-- Layar penuh -->
+<div class="viewer" id="viewer">
+  <div class="vbox"><div class="vcard" id="vcard"></div></div>
+  <div class="vact">
+    <button class="primary" id="vsave"><svg class="i"><use href="#i-dl"/></svg><span data-i18n="save"></span></button>
+    <button class="ib" id="vshare"><svg class="i"><use href="#i-share"/></svg><span data-i18n="share"></span></button>
+    <button class="ib" id="vclose"><svg class="i"><use href="#i-x"/></svg><span data-i18n="viewer_close"></span></button>
   </div>
 </div>
 
@@ -280,84 +448,453 @@ function encode(s){
   return codes;
 }
 
+/* ---------- Dasar, pengaturan, bahasa ---------- */
 const $=id=>document.getElementById(id);
-const tap=()=>{try{navigator.vibrate&&navigator.vibrate(10);}catch(e){}};
-const delay=ms=>new Promise(r=>setTimeout(r,ms));
-let mode="single",items=[],toastT;
-const isBatch=()=>mode==="batch";
+const cfg={q:"std",f:"png",pv:"big",wm:true,lang:"auto"};
+try{const c=JSON.parse(localStorage.getItem("cfg128")||"null");if(c)Object.assign(cfg,c);}catch(e){}
+if(cfg.w)$("w").value=cfg.w;
+if(cfg.h)$("h").value=cfg.h;
+function saveCfg(){try{localStorage.setItem("cfg128",JSON.stringify(Object.assign({},cfg,{w:$("w").value,h:$("h").value})));}catch(e){}}
 
-/* ---------- Gambar barcode ---------- */
-function drawCode128(cv,s){
-  const mod=+$("w").value,bh=+$("h").value,quiet=10*mod,fs=18+mod*2;
-  const codes=encode(s);
-  const pat=codes.map(c=>P[c]).join("");
-  let total=0;for(const d of pat)total+=+d;
-  const wf=10+mod*2;
-  const W=total*mod+quiet*2,H=bh+fs+24+wf+10;
-  cv.width=W;cv.height=H;
-  const ctx=cv.getContext("2d");
-  ctx.fillStyle="#fff";ctx.fillRect(0,0,W,H);
-  ctx.fillStyle="#000";
-  let x=quiet,bar=true;
-  for(const d of pat){const w=+d*mod;if(bar)ctx.fillRect(x,8,w,bh);x+=w;bar=!bar;}
-  ctx.font=fs+"px monospace";ctx.textAlign="center";
-  ctx.fillText(s,W/2,bh+8+fs+4,W-10);
-  ctx.font="italic "+wf+"px sans-serif";ctx.fillStyle="#666";ctx.textAlign="center";
-  ctx.fillText("by aLeMaX",W/2,H-8);
+const KEYS=["nav_single","nav_batch","nav_hist","save","save_all","share","merge","cfg","clear","ph",
+"sep_1d","sep_2d","empty_t_single","empty_p_single","empty_t_batch","empty_p_batch1","empty_p_batch2","cap","count","dup",
+"err_nolib","err_skipped","err_fmt","t_fill","t_saved","t_dl","t_merged","t_noshare","t_default","t_fail",
+"t_lower","hist_t","hist_p","hist_single","hist_batch","hist_open","hist_clear","ts_title","ts_hint","ts_search",
+"ts_none","badge","g1","g2","g3","g4","st_title","st_barcode","st_width","st_height",
+"st_h_note","st_save","st_quality","q_std","q_hd","q_fhd","q_uhd","st_format","f_png","f_jpg",
+"st_view","v_big","v_med","v_small","v_list","st_wm","st_lang","lang_auto","st_about","done",
+"lang_title","viewer_close","ab_role","ab_email","ab_version","ab_license","ab_license_v","ab_source","ab_third","w_digit",
+"w_digits_only","w_ascii","w_text","w_ai","w_free","w_even"];
+const I18N={};
+function L(code,arr){const o={};KEYS.forEach((k,i)=>{o[k]=arr[i];});I18N[code]=o;}
+const LANGS=[["id","Bahasa Indonesia"],["en","English"],["jv","Basa Jawa"],["su","Basa Sunda"],["ms","Bahasa Melayu"],
+["zh-Hans","简体中文"],["zh-Hant","繁體中文"],["ja","日本語"],["ko","한국어"],["hi","हिन्दी"],
+["bn","বাংলা"],["ta","தமிழ்"],["te","తెలుగు"],["ar","العربية"],["ur","اردو"],
+["fa","فارسی"],["tr","Türkçe"],["vi","Tiếng Việt"],["th","ไทย"],["fil","Filipino"],
+["es","Español"],["fr","Français"],["de","Deutsch"],["pt","Português"],["it","Italiano"],
+["nl","Nederlands"],["ru","Русский"],["pl","Polski"],["uk","Українська"],["sw","Kiswahili"]];
+const RTL={ar:1,ur:1,fa:1};
+const LNAME={};LANGS.forEach(l=>{LNAME[l[0]]=l[1];});
+let curLang="en";
+function tr(k,v){
+  let s=(I18N[curLang]&&I18N[curLang][k])||(I18N.en&&I18N.en[k])||k;
+  if(v)for(const x in v)s=s.split("{"+x+"}").join(v[x]);
+  return s;
 }
+function sysLang(){
+  const arr=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||"en"];
+  for(const raw of arr){
+    const l=String(raw).toLowerCase();
+    if(l.indexOf("zh")===0)return /hant|tw|hk|mo/.test(l)?"zh-Hant":"zh-Hans";
+    if(l==="in"||l.indexOf("in-")===0||l.indexOf("id")===0)return "id";
+    if(l.indexOf("fil")===0||l.indexOf("tl")===0)return "fil";
+    const b=l.split("-")[0];
+    if(LNAME[b])return b;
+  }
+  return "en";
+}
+function applyLang(){
+  curLang=cfg.lang==="auto"?sysLang():(I18N[cfg.lang]?cfg.lang:"en");
+  const de=document.documentElement;de.lang=curLang;de.dir=RTL[curLang]?"rtl":"ltr";
+  document.querySelectorAll("[data-i18n]").forEach(e=>{e.textContent=tr(e.dataset.i18n);});
+  document.querySelectorAll("[data-i18n-ph]").forEach(e=>{e.placeholder=tr(e.dataset.i18nPh);});
+  document.querySelectorAll("[data-i18n-aria]").forEach(e=>{e.setAttribute("aria-label",tr(e.dataset.i18nAria));});
+  if(window.__ready){updateTypeUI();render();renderHist();buildTypes($("tq").value);buildLangs();updateSettingsUI();}
+}
+
+L("en",[
+"Single","Batch","History","Save","Save all","Share","Merge","Settings","Clear","e.g. {ex}",
+"Separate with: comma, dot, space","Separate with: new line","Ready to make barcodes","Type text or numbers below and the barcode appears automatically.","Batch mode","Type several codes below. Each part separated by a comma, dot or space becomes one barcode.","Type several texts below, one per line. Each line becomes one barcode.","{type} · {n} characters","{n} barcodes","{n} duplicates ignored",
+"The barcode library did not load, so only Code 128 is available.","Skipped: {list}.","(Format {type}: {hint})","Enter a code first","{n} barcode saved to gallery","{n} barcode downloaded","Combined image saved","Sharing is not available, use Save","Default: {name}","Failed: {e}",
+"Quality lowered to fit memory","No history yet","Codes you save or share will appear here.","Single","Batch","tap to open","Clear all history","Barcode type","Tap a type to use it. Tap ★ to make it the default.","Search barcode types…",
+"No matching type.","Default","1D · General","1D · Retail & products","1D · Industrial & special","2D","Settings","Barcode","Bar width","Height",
+"Height only applies to 1D barcodes. For 2D, the size follows bar width.","Saved image","Quality","Standard","HD","Full HD","4K","Format","sharpest","smaller file",
+"Preview size","Large","Medium","Small","List","Watermark “by aLeMaX”","Language","Follow system","About","Done",
+"Language","Close","Developer","Email","Version","License","Open source · MIT","Source code","Third-party libraries","digits",
+"digits only","any ASCII character","text or numbers","AI codes in brackets","any text or link","digits only (even length)"
+]);
+L("id",[
+"Tunggal","Batch","Riwayat","Simpan","Simpan semua","Bagikan","Gabung","Pengaturan","Hapus isi","mis. {ex}",
+"Pisahkan: koma, titik, spasi","Pisahkan: baris baru","Siap membuat barcode","Ketik teks atau angka di bawah, barcode muncul otomatis.","Mode Batch","Ketik beberapa kode di bawah. Tiap bagian yang dipisah koma, titik, atau spasi jadi satu barcode.","Ketik beberapa teks di bawah, satu per baris. Tiap baris jadi satu barcode.","{type} · {n} karakter","{n} barcode","{n} duplikat diabaikan",
+"Pustaka barcode belum termuat, jadi hanya Code 128 yang bisa dipakai.","Dilewati: {list}.","(Format {type}: {hint})","Isi kode dulu","{n} barcode tersimpan di galeri","{n} barcode diunduh","Gambar gabungan tersimpan","Fitur bagikan tidak tersedia, gunakan Simpan","Default: {name}","Gagal: {e}",
+"Kualitas diturunkan agar muat di memori","Belum ada riwayat","Kode yang kamu simpan atau bagikan akan muncul di sini.","Tunggal","Batch","ketuk untuk membuka","Hapus semua riwayat","Jenis barcode","Ketuk jenis untuk dipakai. Ketuk ★ untuk menjadikannya default.","Cari jenis barcode…",
+"Tidak ada jenis yang cocok.","Default","1D · Umum","1D · Ritel & produk","1D · Industri & khusus","2D","Pengaturan","Barcode","Lebar garis","Tinggi",
+"Tinggi hanya berlaku untuk barcode 1D. Pada barcode 2D, ukuran mengikuti lebar garis.","Gambar tersimpan","Kualitas","Standar","HD","Full HD","4K","Format","paling tajam","file lebih kecil",
+"Ukuran pratinjau","Besar","Sedang","Kecil","Daftar","Watermark “by aLeMaX”","Bahasa","Ikuti sistem","Tentang","Selesai",
+"Bahasa","Tutup","Pengembang","Email","Versi","Lisensi","Open source · MIT","Kode sumber","Pustaka pihak ketiga","digit",
+"angka saja","semua karakter ASCII","teks atau angka","kode AI dalam kurung","teks atau tautan apa saja","angka saja (panjang genap)"
+]);
+
+L("jv",[
+"Siji","Batch","Riwayat","Simpen","Simpen kabèh","Wènèhké","Gabung","Setelan","Busak isi","tuladha {ex}",
+"Pisahaké nganggo: koma, titik, spasi","Pisahaké nganggo: baris anyar","Siap gawé barcode","Ketik teks utawa angka ing ngisor, barcode metu otomatis.","Mode Batch","Ketik sawetara kode ing ngisor. Saben bagéan sing dipisah koma, titik, utawa spasi dadi siji barcode.","Ketik sawetara teks ing ngisor, siji saben baris. Saben baris dadi siji barcode.","{type} · {n} aksara","{n} barcode","{n} dobel diabaikan",
+"Pustaka barcode durung kaemot, dadi mung Code 128 sing bisa dipigunakaké.","Dilewati: {list}.","(Format {type}: {hint})","Isi kode dhisik","{n} barcode kasimpen ing galeri","{n} barcode wis diundhuh","Gambar gabungan kasimpen","Fitur nuduhaké ora kasedhiya, gunakna Simpen","Default: {name}","Gagal: {e}",
+"Kualitas diturunaké supaya cukup ing memori","Durung ana riwayat","Kode sing sampeyan simpen utawa wènèhké bakal metu ing kéné.","Siji","Batch","ketok kanggo mbukak","Busak kabèh riwayat","Jinis barcode","Ketok jinis kanggo nggunakaké. Ketok ★ kanggo dadi default.","Golèk jinis barcode…",
+"Ora ana jinis sing cocog.","Default","1D · Umum","1D · Eceran & produk","1D · Industri & khusus","2D","Setelan","Barcode","Jembaré garis","Dhuwur",
+"Dhuwur mung ditrapaké kanggo barcode 1D. Kanggo 2D, ukuran manut jembaré garis.","Gambar kasimpen","Kualitas","Standar","HD","Full HD","4K","Format","paling landhep","berkas luwih cilik",
+"Ukuran pratinjau","Gedhé","Sedheng","Cilik","Dhaftar","Watermark “by aLeMaX”","Basa","Manut sistem","Bab","Rampung",
+"Basa","Tutup","Pangembang","Email","Versi","Lisensi","Open source · MIT","Kode sumber","Pustaka pihak katelu","digit",
+"angka waé","kabèh aksara ASCII","teks utawa angka","kode AI ing njero kurung","teks utawa pranala apa waé","angka waé (dawa genap)"
+]);
+L("su",[
+"Tunggal","Batch","Riwayat","Simpen","Simpen sadayana","Bagikeun","Ngagabung","Pangaturan","Hapus eusi","upamina {ex}",
+"Pisahkeun ku: koma, titik, spasi","Pisahkeun ku: baris anyar","Siap nyieun barcode","Ketik téks atawa angka di handap, barcode bakal muncul otomatis.","Mode Batch","Ketik sababaraha kode di handap. Unggal bagian anu dipisahkeun koma, titik, atawa spasi jadi hiji barcode.","Ketik sababaraha téks di handap, hiji unggal baris. Unggal baris jadi hiji barcode.","{type} · {n} karakter","{n} barcode","{n} duplikat diabaikeun",
+"Pustaka barcode can dimuat, jadi ngan Code 128 anu bisa dipaké.","Dilewatan: {list}.","(Format {type}: {hint})","Eusian kode heula","{n} barcode disimpen dina galeri","{n} barcode diundeur","Gambar gabungan disimpen","Fitur bagikeun teu sayogi, paké Simpen","Default: {name}","Gagal: {e}",
+"Kualitas diturunkeun supaya cukup dina mémori","Can aya riwayat","Kode anu anjeun simpen atawa bagikeun bakal muncul di dieu.","Tunggal","Batch","pencét pikeun muka","Hapus sakabéh riwayat","Jinis barcode","Pencét jinis pikeun maké. Pencét ★ pikeun ngajadikeun default.","Néangan jinis barcode…",
+"Euweuh jinis anu cocog.","Default","1D · Umum","1D · Éceran & produk","1D · Industri & husus","2D","Pangaturan","Barcode","Rubak garis","Jangkungna",
+"Jangkungna ukur lumaku pikeun barcode 1D. Pikeun 2D, ukuran nuturkeun rubak garis.","Gambar disimpen","Kualitas","Standar","HD","Full HD","4K","Format","pang seukeutna","koropak leuwih leutik",
+"Ukuran pratinjau","Badag","Sedeng","Leutik","Daptar","Watermark “by aLeMaX”","Basa","Nuturkeun sistem","Ngeunaan","Réngsé",
+"Basa","Tutup","Pamekar","Surélék","Vérsi","Lisénsi","Open source · MIT","Kode sumber","Pustaka pihak katilu","digit",
+"angka waé","sakabéh karakter ASCII","téks atawa angka","kode AI dina kurung","téks atawa tutumbu naon waé","angka waé (panjang genap)"
+]);
+L("ms",[
+"Tunggal","Kelompok","Sejarah","Simpan","Simpan semua","Kongsi","Gabung","Tetapan","Kosongkan","cth. {ex}",
+"Asingkan dengan: koma, titik, ruang","Asingkan dengan: baris baharu","Sedia untuk membuat kod bar","Taip teks atau nombor di bawah, kod bar muncul secara automatik.","Mod Kelompok","Taip beberapa kod di bawah. Setiap bahagian yang dipisahkan koma, titik atau ruang menjadi satu kod bar.","Taip beberapa teks di bawah, satu setiap baris. Setiap baris menjadi satu kod bar.","{type} · {n} aksara","{n} kod bar","{n} pendua diabaikan",
+"Pustaka kod bar tidak dimuatkan, jadi hanya Code 128 tersedia.","Dilangkau: {list}.","(Format {type}: {hint})","Masukkan kod dahulu","{n} kod bar disimpan ke galeri","{n} kod bar dimuat turun","Imej gabungan disimpan","Perkongsian tidak tersedia, gunakan Simpan","Lalai: {name}","Gagal: {e}",
+"Kualiti diturunkan agar muat dalam memori","Belum ada sejarah","Kod yang anda simpan atau kongsi akan muncul di sini.","Tunggal","Kelompok","ketik untuk buka","Padam semua sejarah","Jenis kod bar","Ketik jenis untuk menggunakannya. Ketik ★ untuk menjadikannya lalai.","Cari jenis kod bar…",
+"Tiada jenis yang sepadan.","Lalai","1D · Umum","1D · Runcit & produk","1D · Industri & khas","2D","Tetapan","Kod bar","Lebar garisan","Tinggi",
+"Tinggi hanya terpakai untuk kod bar 1D. Untuk 2D, saiz mengikut lebar garisan.","Imej disimpan","Kualiti","Standard","HD","Full HD","4K","Format","paling tajam","fail lebih kecil",
+"Saiz pratonton","Besar","Sederhana","Kecil","Senarai","Watermark “by aLeMaX”","Bahasa","Ikut sistem","Perihal","Selesai",
+"Bahasa","Tutup","Pembangun","E-mel","Versi","Lesen","Sumber terbuka · MIT","Kod sumber","Pustaka pihak ketiga","digit",
+"nombor sahaja","semua aksara ASCII","teks atau nombor","kod AI dalam kurungan","sebarang teks atau pautan","nombor sahaja (panjang genap)"
+]);
+
+L("zh-Hans",[
+"单个","批量","历史","保存","全部保存","分享","合并","设置","清空","例如 {ex}",
+"分隔方式：逗号、句点、空格","分隔方式：换行","准备生成条码","在下方输入文字或数字，条码会自动生成。","批量模式","在下方输入多个代码。以逗号、句点或空格分隔的每一部分将生成一个条码。","在下方输入多段文字，每行一段。每一行生成一个条码。","{type} · {n} 个字符","{n} 个条码","已忽略 {n} 个重复项",
+"条码库未能加载，因此只能使用 Code 128。","已跳过：{list}。","（格式 {type}：{hint}）","请先输入代码","已将 {n} 个条码保存到相册","已下载 {n} 个条码","合并图片已保存","无法使用分享功能，请使用保存","默认：{name}","失败：{e}",
+"为适应内存已降低画质","暂无历史记录","你保存或分享的代码会显示在这里。","单个","批量","点按打开","清除全部历史记录","条码类型","点按类型即可使用。点按 ★ 设为默认。","搜索条码类型…",
+"没有匹配的类型。","默认","1D · 通用","1D · 零售与商品","1D · 工业与特殊","2D","设置","条码","线条宽度","高度",
+"高度仅适用于 1D 条码。2D 条码的大小由线条宽度决定。","保存的图片","画质","标准","HD","Full HD","4K","格式","最清晰","文件更小",
+"预览大小","大","中","小","列表","水印“by aLeMaX”","语言","跟随系统","关于","完成",
+"语言","关闭","开发者","电子邮件","版本","许可证","开源 · MIT","源代码","第三方库","位数字",
+"仅限数字","任意 ASCII 字符","文字或数字","括号内的 AI 代码","任意文字或链接","仅限数字（偶数长度）"
+]);
+L("zh-Hant",[
+"單一","批次","記錄","儲存","全部儲存","分享","合併","設定","清除","例如 {ex}",
+"分隔方式：逗號、句點、空格","分隔方式：換行","準備產生條碼","在下方輸入文字或數字，條碼會自動產生。","批次模式","在下方輸入多個代碼。以逗號、句點或空格分隔的每個部分會產生一個條碼。","在下方輸入多段文字，每行一段。每一行會產生一個條碼。","{type} · {n} 個字元","{n} 個條碼","已忽略 {n} 個重複項目",
+"條碼程式庫未能載入，因此只能使用 Code 128。","已略過：{list}。","（格式 {type}：{hint}）","請先輸入代碼","已將 {n} 個條碼儲存到相簿","已下載 {n} 個條碼","合併圖片已儲存","無法使用分享功能，請使用儲存","預設：{name}","失敗：{e}",
+"為配合記憶體已降低畫質","尚無記錄","你儲存或分享的代碼會顯示在這裡。","單一","批次","點一下開啟","清除所有記錄","條碼類型","點選類型即可使用。點選 ★ 設為預設。","搜尋條碼類型…",
+"沒有相符的類型。","預設","1D · 通用","1D · 零售與商品","1D · 工業與特殊","2D","設定","條碼","線條寬度","高度",
+"高度僅適用於 1D 條碼。2D 條碼的大小由線條寬度決定。","儲存的圖片","畫質","標準","HD","Full HD","4K","格式","最清晰","檔案較小",
+"預覽大小","大","中","小","清單","浮水印「by aLeMaX」","語言","跟隨系統","關於","完成",
+"語言","關閉","開發者","電子郵件","版本","授權","開源 · MIT","原始碼","第三方程式庫","位數字",
+"僅限數字","任意 ASCII 字元","文字或數字","括號內的 AI 代碼","任意文字或連結","僅限數字（偶數長度）"
+]);
+L("ja",[
+"単体","一括","履歴","保存","すべて保存","共有","結合","設定","クリア","例: {ex}",
+"区切り: カンマ、ピリオド、スペース","区切り: 改行","バーコードを作成できます","下にテキストか数字を入力すると、バーコードが自動で表示されます。","一括モード","下に複数のコードを入力します。カンマ、ピリオド、スペースで区切った各部分が1つのバーコードになります。","下に複数のテキストを1行ずつ入力します。各行が1つのバーコードになります。","{type} · {n} 文字","{n} 件のバーコード","重複 {n} 件を無視しました",
+"バーコードライブラリを読み込めなかったため、Code 128 のみ使用できます。","スキップ: {list}。","(形式 {type}: {hint})","先にコードを入力してください","{n} 件のバーコードをギャラリーに保存しました","{n} 件のバーコードをダウンロードしました","結合画像を保存しました","共有は利用できません。保存を使ってください","デフォルト: {name}","失敗: {e}",
+"メモリに収めるため画質を下げました","履歴はまだありません","保存または共有したコードがここに表示されます。","単体","一括","タップして開く","履歴をすべて削除","バーコードの種類","種類をタップして使用します。★ をタップするとデフォルトになります。","バーコードの種類を検索…",
+"一致する種類がありません。","デフォルト","1D · 一般","1D · 小売・商品","1D · 産業・特殊","2D","設定","バーコード","バーの幅","高さ",
+"高さは 1D バーコードのみに適用されます。2D ではバーの幅でサイズが決まります。","保存する画像","画質","標準","HD","Full HD","4K","形式","最も鮮明","ファイルが小さい",
+"プレビューのサイズ","大","中","小","リスト","透かし「by aLeMaX」","言語","システムに合わせる","このアプリについて","完了",
+"言語","閉じる","開発者","メール","バージョン","ライセンス","オープンソース · MIT","ソースコード","サードパーティライブラリ","桁",
+"数字のみ","ASCII 文字すべて","テキストまたは数字","括弧付きの AI コード","任意のテキストまたはリンク","数字のみ（偶数桁）"
+]);
+
+L("ko",[
+"단일","일괄","기록","저장","모두 저장","공유","병합","설정","지우기","예: {ex}",
+"구분: 쉼표, 마침표, 공백","구분: 줄바꿈","바코드를 만들 준비가 되었습니다","아래에 텍스트나 숫자를 입력하면 바코드가 자동으로 나타납니다.","일괄 모드","아래에 여러 코드를 입력하세요. 쉼표, 마침표, 공백으로 구분된 각 부분이 하나의 바코드가 됩니다.","아래에 여러 텍스트를 한 줄에 하나씩 입력하세요. 각 줄이 하나의 바코드가 됩니다.","{type} · {n}자","바코드 {n}개","중복 {n}개 무시됨",
+"바코드 라이브러리를 불러오지 못해 Code 128만 사용할 수 있습니다.","건너뜀: {list}.","(형식 {type}: {hint})","먼저 코드를 입력하세요","바코드 {n}개를 갤러리에 저장했습니다","바코드 {n}개를 다운로드했습니다","병합 이미지를 저장했습니다","공유를 사용할 수 없습니다. 저장을 사용하세요","기본값: {name}","실패: {e}",
+"메모리에 맞추기 위해 화질을 낮췄습니다","아직 기록이 없습니다","저장하거나 공유한 코드가 여기에 표시됩니다.","단일","일괄","눌러서 열기","기록 모두 지우기","바코드 종류","종류를 눌러 사용하세요. ★를 누르면 기본값이 됩니다.","바코드 종류 검색…",
+"일치하는 종류가 없습니다.","기본값","1D · 일반","1D · 소매 및 제품","1D · 산업 및 특수","2D","설정","바코드","막대 너비","높이",
+"높이는 1D 바코드에만 적용됩니다. 2D는 막대 너비에 따라 크기가 정해집니다.","저장 이미지","화질","표준","HD","Full HD","4K","형식","가장 선명","파일 크기 작음",
+"미리보기 크기","크게","보통","작게","목록","워터마크 “by aLeMaX”","언어","시스템 따르기","정보","완료",
+"언어","닫기","개발자","이메일","버전","라이선스","오픈 소스 · MIT","소스 코드","서드파티 라이브러리","자리 숫자",
+"숫자만","모든 ASCII 문자","텍스트 또는 숫자","괄호 안의 AI 코드","모든 텍스트 또는 링크","숫자만 (짝수 길이)"
+]);
+L("hi",[
+"एकल","बैच","इतिहास","सहेजें","सभी सहेजें","साझा करें","जोड़ें","सेटिंग","साफ़ करें","जैसे {ex}",
+"अलग करें: अल्पविराम, बिंदु, स्पेस","अलग करें: नई पंक्ति","बारकोड बनाने के लिए तैयार","नीचे टेक्स्ट या अंक लिखें, बारकोड अपने आप बन जाएगा।","बैच मोड","नीचे कई कोड लिखें। अल्पविराम, बिंदु या स्पेस से अलग हर हिस्सा एक बारकोड बनेगा।","नीचे कई टेक्स्ट लिखें, हर पंक्ति में एक। हर पंक्ति एक बारकोड बनेगी।","{type} · {n} अक्षर","{n} बारकोड","{n} दोहराव अनदेखे किए गए",
+"बारकोड लाइब्रेरी लोड नहीं हुई, इसलिए केवल Code 128 उपलब्ध है।","छोड़े गए: {list}।","(फ़ॉर्मेट {type}: {hint})","पहले कोड दर्ज करें","{n} बारकोड गैलरी में सहेजा गया","{n} बारकोड डाउनलोड हुआ","संयुक्त चित्र सहेजा गया","साझा करना उपलब्ध नहीं है, सहेजें का उपयोग करें","डिफ़ॉल्ट: {name}","विफल: {e}",
+"मेमोरी में समाने के लिए गुणवत्ता घटाई गई","अभी कोई इतिहास नहीं","आप जो कोड सहेजते या साझा करते हैं वे यहाँ दिखेंगे।","एकल","बैच","खोलने के लिए टैप करें","पूरा इतिहास मिटाएँ","बारकोड का प्रकार","उपयोग के लिए प्रकार पर टैप करें। डिफ़ॉल्ट बनाने के लिए ★ पर टैप करें।","बारकोड प्रकार खोजें…",
+"कोई मेल खाता प्रकार नहीं।","डिफ़ॉल्ट","1D · सामान्य","1D · खुदरा और उत्पाद","1D · औद्योगिक और विशेष","2D","सेटिंग","बारकोड","रेखा की चौड़ाई","ऊँचाई",
+"ऊँचाई केवल 1D बारकोड पर लागू होती है। 2D में आकार रेखा की चौड़ाई के अनुसार होता है।","सहेजा गया चित्र","गुणवत्ता","मानक","HD","Full HD","4K","फ़ॉर्मेट","सबसे स्पष्ट","छोटी फ़ाइल",
+"पूर्वावलोकन आकार","बड़ा","मध्यम","छोटा","सूची","वॉटरमार्क “by aLeMaX”","भाषा","सिस्टम के अनुसार","ऐप के बारे में","हो गया",
+"भाषा","बंद करें","डेवलपर","ईमेल","संस्करण","लाइसेंस","ओपन सोर्स · MIT","सोर्स कोड","तृतीय-पक्ष लाइब्रेरी","अंक",
+"केवल अंक","कोई भी ASCII अक्षर","टेक्स्ट या अंक","कोष्ठक में AI कोड","कोई भी टेक्स्ट या लिंक","केवल अंक (सम लंबाई)"
+]);
+L("bn",[
+"একক","ব্যাচ","ইতিহাস","সংরক্ষণ","সব সংরক্ষণ","শেয়ার","একত্র","সেটিংস","মুছুন","যেমন {ex}",
+"আলাদা করুন: কমা, বিন্দু, স্পেস","আলাদা করুন: নতুন লাইন","বারকোড তৈরির জন্য প্রস্তুত","নিচে লেখা বা সংখ্যা টাইপ করুন, বারকোড নিজে থেকেই তৈরি হবে।","ব্যাচ মোড","নিচে একাধিক কোড টাইপ করুন। কমা, বিন্দু বা স্পেস দিয়ে আলাদা করা প্রতিটি অংশ একটি বারকোড হবে।","নিচে একাধিক লেখা টাইপ করুন, প্রতি লাইনে একটি। প্রতিটি লাইন একটি বারকোড হবে।","{type} · {n}টি অক্ষর","{n}টি বারকোড","{n}টি পুনরাবৃত্তি উপেক্ষা করা হয়েছে",
+"বারকোড লাইব্রেরি লোড হয়নি, তাই শুধু Code 128 ব্যবহার করা যাবে।","বাদ দেওয়া হয়েছে: {list}।","(ফরম্যাট {type}: {hint})","আগে একটি কোড লিখুন","{n}টি বারকোড গ্যালারিতে সংরক্ষিত হয়েছে","{n}টি বারকোড ডাউনলোড হয়েছে","একত্র ছবি সংরক্ষিত হয়েছে","শেয়ার করা যাচ্ছে না, সংরক্ষণ ব্যবহার করুন","ডিফল্ট: {name}","ব্যর্থ: {e}",
+"মেমরিতে ধরানোর জন্য মান কমানো হয়েছে","এখনও কোনো ইতিহাস নেই","আপনি যে কোড সংরক্ষণ বা শেয়ার করবেন তা এখানে দেখা যাবে।","একক","ব্যাচ","খুলতে ট্যাপ করুন","সব ইতিহাস মুছুন","বারকোডের ধরন","ব্যবহার করতে ধরনে ট্যাপ করুন। ডিফল্ট করতে ★ ট্যাপ করুন।","বারকোডের ধরন খুঁজুন…",
+"কোনো মিল পাওয়া যায়নি।","ডিফল্ট","1D · সাধারণ","1D · খুচরা ও পণ্য","1D · শিল্প ও বিশেষ","2D","সেটিংস","বারকোড","রেখার প্রস্থ","উচ্চতা",
+"উচ্চতা শুধু 1D বারকোডে প্রযোজ্য। 2D-তে আকার রেখার প্রস্থ অনুযায়ী হয়।","সংরক্ষিত ছবি","মান","স্ট্যান্ডার্ড","HD","Full HD","4K","ফরম্যাট","সবচেয়ে স্পষ্ট","ছোট ফাইল",
+"প্রিভিউয়ের আকার","বড়","মাঝারি","ছোট","তালিকা","ওয়াটারমার্ক “by aLeMaX”","ভাষা","সিস্টেম অনুসরণ","পরিচিতি","সম্পন্ন",
+"ভাষা","বন্ধ করুন","ডেভেলপার","ইমেইল","সংস্করণ","লাইসেন্স","ওপেন সোর্স · MIT","সোর্স কোড","তৃতীয়-পক্ষের লাইব্রেরি","সংখ্যা",
+"শুধু সংখ্যা","যেকোনো ASCII অক্ষর","লেখা বা সংখ্যা","বন্ধনীর ভেতরে AI কোড","যেকোনো লেখা বা লিংক","শুধু সংখ্যা (জোড় দৈর্ঘ্য)"
+]);
+
+L("ta",[
+"தனி","தொகுப்பு","வரலாறு","சேமி","அனைத்தையும் சேமி","பகிர்","இணை","அமைப்புகள்","அழி","எ.கா. {ex}",
+"பிரிக்க: கமா, புள்ளி, இடைவெளி","பிரிக்க: புதிய வரி","பார்கோடு உருவாக்கத் தயார்","கீழே உரை அல்லது எண்களை உள்ளிடுங்கள், பார்கோடு தானாக தோன்றும்.","தொகுப்பு முறை","கீழே பல குறியீடுகளை உள்ளிடுங்கள். கமா, புள்ளி அல்லது இடைவெளியால் பிரிக்கப்பட்ட ஒவ்வொரு பகுதியும் ஒரு பார்கோடு ஆகும்.","கீழே பல உரைகளை ஒரு வரிக்கு ஒன்றாக உள்ளிடுங்கள். ஒவ்வொரு வரியும் ஒரு பார்கோடு ஆகும்.","{type} · {n} எழுத்துகள்","{n} பார்கோடுகள்","{n} நகல்கள் புறக்கணிக்கப்பட்டன",
+"பார்கோடு நூலகம் ஏற்றப்படவில்லை, எனவே Code 128 மட்டுமே கிடைக்கும்.","தவிர்க்கப்பட்டவை: {list}.","(வடிவம் {type}: {hint})","முதலில் குறியீட்டை உள்ளிடுங்கள்","{n} பார்கோடுகள் கேலரியில் சேமிக்கப்பட்டன","{n} பார்கோடுகள் பதிவிறக்கப்பட்டன","இணைந்த படம் சேமிக்கப்பட்டது","பகிர முடியவில்லை, சேமி என்பதைப் பயன்படுத்துங்கள்","இயல்புநிலை: {name}","தோல்வி: {e}",
+"நினைவகத்துக்கு ஏற்ப தரம் குறைக்கப்பட்டது","இன்னும் வரலாறு இல்லை","நீங்கள் சேமிக்கும் அல்லது பகிரும் குறியீடுகள் இங்கே தோன்றும்.","தனி","தொகுப்பு","திறக்கத் தட்டவும்","வரலாறு முழுவதையும் அழி","பார்கோடு வகை","பயன்படுத்த வகையைத் தட்டவும். இயல்புநிலையாக்க ★ தட்டவும்.","பார்கோடு வகைகளைத் தேடு…",
+"பொருந்தும் வகை இல்லை.","இயல்புநிலை","1D · பொது","1D · சில்லறை & பொருட்கள்","1D · தொழில்துறை & சிறப்பு","2D","அமைப்புகள்","பார்கோடு","கோட்டின் அகலம்","உயரம்",
+"உயரம் 1D பார்கோடுகளுக்கு மட்டுமே பொருந்தும். 2D-இல் அளவு கோட்டின் அகலத்தைப் பொறுத்தது.","சேமிக்கும் படம்","தரம்","நிலையான","HD","Full HD","4K","வடிவம்","மிகத் தெளிவு","சிறிய கோப்பு",
+"முன்னோட்ட அளவு","பெரிய","நடுத்தர","சிறிய","பட்டியல்","வாட்டர்மார்க் “by aLeMaX”","மொழி","கணினியைப் பின்பற்று","பற்றி","முடிந்தது",
+"மொழி","மூடு","உருவாக்குநர்","மின்னஞ்சல்","பதிப்பு","உரிமம்","திறந்த மூலம் · MIT","மூலக் குறியீடு","மூன்றாம் தரப்பு நூலகங்கள்","இலக்கங்கள்",
+"இலக்கங்கள் மட்டும்","எந்த ASCII எழுத்தும்","உரை அல்லது எண்கள்","அடைப்புக்குறிக்குள் AI குறியீடுகள்","எந்த உரை அல்லது இணைப்பு","இலக்கங்கள் மட்டும் (இரட்டை நீளம்)"
+]);
+L("te",[
+"ఒకటి","బ్యాచ్","చరిత్ర","సేవ్","అన్నీ సేవ్","షేర్","విలీనం","సెట్టింగ్‌లు","తొలగించు","ఉదా. {ex}",
+"వేరు చేయడానికి: కామా, చుక్క, స్పేస్","వేరు చేయడానికి: కొత్త లైన్","బార్‌కోడ్‌లు చేయడానికి సిద్ధం","కింద టెక్స్ట్ లేదా సంఖ్యలు టైప్ చేయండి, బార్‌కోడ్ ఆటోమేటిక్‌గా వస్తుంది.","బ్యాచ్ మోడ్","కింద అనేక కోడ్‌లు టైప్ చేయండి. కామా, చుక్క లేదా స్పేస్‌తో వేరు చేసిన ప్రతి భాగం ఒక బార్‌కోడ్ అవుతుంది.","కింద అనేక టెక్స్ట్‌లు ఒక్కో లైన్‌కు ఒకటి చొప్పున టైప్ చేయండి. ప్రతి లైన్ ఒక బార్‌కోడ్ అవుతుంది.","{type} · {n} అక్షరాలు","{n} బార్‌కోడ్‌లు","{n} నకిలీలు విస్మరించబడ్డాయి",
+"బార్‌కోడ్ లైబ్రరీ లోడ్ కాలేదు, కాబట్టి Code 128 మాత్రమే అందుబాటులో ఉంది.","దాటవేయబడినవి: {list}.","(ఫార్మాట్ {type}: {hint})","ముందు కోడ్ ఎంటర్ చేయండి","{n} బార్‌కోడ్‌లు గ్యాలరీలో సేవ్ అయ్యాయి","{n} బార్‌కోడ్‌లు డౌన్‌లోడ్ అయ్యాయి","కలిపిన చిత్రం సేవ్ అయ్యింది","షేర్ అందుబాటులో లేదు, సేవ్ వాడండి","డిఫాల్ట్: {name}","విఫలమైంది: {e}",
+"మెమరీకి సరిపోయేలా నాణ్యత తగ్గించబడింది","ఇంకా చరిత్ర లేదు","మీరు సేవ్ చేసిన లేదా షేర్ చేసిన కోడ్‌లు ఇక్కడ కనిపిస్తాయి.","ఒకటి","బ్యాచ్","తెరవడానికి నొక్కండి","మొత్తం చరిత్రను తొలగించు","బార్‌కోడ్ రకం","వాడటానికి రకాన్ని నొక్కండి. డిఫాల్ట్ చేయడానికి ★ నొక్కండి.","బార్‌కోడ్ రకాలను వెతకండి…",
+"సరిపోలే రకం లేదు.","డిఫాల్ట్","1D · సాధారణ","1D · రిటైల్ & ఉత్పత్తులు","1D · పారిశ్రామిక & ప్రత్యేక","2D","సెట్టింగ్‌లు","బార్‌కోడ్","గీత వెడల్పు","ఎత్తు",
+"ఎత్తు 1D బార్‌కోడ్‌లకు మాత్రమే వర్తిస్తుంది. 2Dలో పరిమాణం గీత వెడల్పును బట్టి ఉంటుంది.","సేవ్ అయ్యే చిత్రం","నాణ్యత","ప్రామాణిక","HD","Full HD","4K","ఫార్మాట్","అత్యంత స్పష్టం","చిన్న ఫైల్",
+"ప్రివ్యూ పరిమాణం","పెద్దది","మధ్యస్థం","చిన్నది","జాబితా","వాటర్‌మార్క్ “by aLeMaX”","భాష","సిస్టమ్‌ను అనుసరించు","గురించి","పూర్తయింది",
+"భాష","మూసివేయి","డెవలపర్","ఈమెయిల్","వెర్షన్","లైసెన్స్","ఓపెన్ సోర్స్ · MIT","సోర్స్ కోడ్","థర్డ్-పార్టీ లైబ్రరీలు","అంకెలు",
+"అంకెలు మాత్రమే","ఏదైనా ASCII అక్షరం","టెక్స్ట్ లేదా సంఖ్యలు","బ్రాకెట్లలో AI కోడ్‌లు","ఏదైనా టెక్స్ట్ లేదా లింక్","అంకెలు మాత్రమే (సరి పొడవు)"
+]);
+L("ar",[
+"فردي","دفعة","السجل","حفظ","حفظ الكل","مشاركة","دمج","الإعدادات","مسح","مثال {ex}",
+"الفصل بـ: فاصلة، نقطة، مسافة","الفصل بـ: سطر جديد","جاهز لإنشاء الباركود","اكتب نصًا أو أرقامًا أدناه ويظهر الباركود تلقائيًا.","وضع الدفعة","اكتب عدة رموز أدناه. كل جزء مفصول بفاصلة أو نقطة أو مسافة يصبح باركودًا واحدًا.","اكتب عدة نصوص أدناه، نصًا في كل سطر. كل سطر يصبح باركودًا واحدًا.","{type} · {n} حرفًا","{n} باركود","تم تجاهل {n} مكرر",
+"لم يتم تحميل مكتبة الباركود، لذا يتوفر Code 128 فقط.","تم التخطي: {list}.","(الصيغة {type}: {hint})","أدخل الرمز أولًا","تم حفظ {n} باركود في المعرض","تم تنزيل {n} باركود","تم حفظ الصورة المدمجة","المشاركة غير متاحة، استخدم حفظ","الافتراضي: {name}","فشل: {e}",
+"تم خفض الجودة لتناسب الذاكرة","لا يوجد سجل بعد","الرموز التي تحفظها أو تشاركها ستظهر هنا.","فردي","دفعة","اضغط للفتح","مسح السجل بالكامل","نوع الباركود","اضغط على نوع لاستخدامه. اضغط ★ لجعله الافتراضي.","ابحث عن أنواع الباركود…",
+"لا يوجد نوع مطابق.","افتراضي","1D · عام","1D · التجزئة والمنتجات","1D · صناعي وخاص","2D","الإعدادات","الباركود","عرض الخط","الارتفاع",
+"الارتفاع ينطبق على باركود 1D فقط. في 2D يتبع الحجم عرض الخط.","الصورة المحفوظة","الجودة","قياسي","HD","Full HD","4K","الصيغة","الأوضح","ملف أصغر",
+"حجم المعاينة","كبير","متوسط","صغير","قائمة","العلامة المائية “by aLeMaX”","اللغة","اتباع النظام","حول","تم",
+"اللغة","إغلاق","المطوّر","البريد الإلكتروني","الإصدار","الترخيص","مفتوح المصدر · MIT","الكود المصدري","مكتبات الطرف الثالث","أرقام",
+"أرقام فقط","أي حرف ASCII","نص أو أرقام","رموز AI بين أقواس","أي نص أو رابط","أرقام فقط (طول زوجي)"
+]);
+
+L("ur",[
+"واحد","بیچ","ہسٹری","محفوظ کریں","سب محفوظ کریں","شیئر کریں","ضم کریں","سیٹنگز","صاف کریں","مثلاً {ex}",
+"الگ کریں: کومہ، نقطہ، اسپیس","الگ کریں: نئی لائن","بار کوڈ بنانے کے لیے تیار","نیچے متن یا اعداد لکھیں، بار کوڈ خود بخود بن جائے گا۔","بیچ موڈ","نیچے کئی کوڈ لکھیں۔ کومہ، نقطہ یا اسپیس سے الگ ہر حصہ ایک بار کوڈ بنے گا۔","نیچے کئی متن ایک لائن میں ایک لکھیں۔ ہر لائن ایک بار کوڈ بنے گی۔","{type} · {n} حروف","{n} بار کوڈ","{n} نقول نظرانداز کی گئیں",
+"بار کوڈ لائبریری لوڈ نہیں ہوئی، اس لیے صرف Code 128 دستیاب ہے۔","چھوڑے گئے: {list}۔","(فارمیٹ {type}: {hint})","پہلے کوڈ درج کریں","{n} بار کوڈ گیلری میں محفوظ ہوئے","{n} بار کوڈ ڈاؤن لوڈ ہوئے","ملی ہوئی تصویر محفوظ ہو گئی","شیئر دستیاب نہیں، محفوظ کریں استعمال کریں","ڈیفالٹ: {name}","ناکام: {e}",
+"میموری کے مطابق معیار کم کیا گیا","ابھی کوئی ہسٹری نہیں","آپ جو کوڈ محفوظ یا شیئر کریں گے وہ یہاں نظر آئیں گے۔","واحد","بیچ","کھولنے کے لیے ٹیپ کریں","پوری ہسٹری مٹائیں","بار کوڈ کی قسم","استعمال کے لیے قسم پر ٹیپ کریں۔ ڈیفالٹ بنانے کے لیے ★ ٹیپ کریں۔","بار کوڈ اقسام تلاش کریں…",
+"کوئی مماثل قسم نہیں۔","ڈیفالٹ","1D · عمومی","1D · ریٹیل اور مصنوعات","1D · صنعتی اور خصوصی","2D","سیٹنگز","بار کوڈ","لکیر کی چوڑائی","اونچائی",
+"اونچائی صرف 1D بار کوڈ پر لاگو ہوتی ہے۔ 2D میں سائز لکیر کی چوڑائی کے مطابق ہوتا ہے۔","محفوظ تصویر","معیار","معیاری","HD","Full HD","4K","فارمیٹ","سب سے واضح","چھوٹی فائل",
+"پیش منظر کا سائز","بڑا","درمیانہ","چھوٹا","فہرست","واٹر مارک “by aLeMaX”","زبان","سسٹم کے مطابق","کے بارے میں","مکمل",
+"زبان","بند کریں","ڈویلپر","ای میل","ورژن","لائسنس","اوپن سورس · MIT","سورس کوڈ","تھرڈ پارٹی لائبریریاں","ہندسے",
+"صرف ہندسے","کوئی بھی ASCII حرف","متن یا اعداد","قوسین میں AI کوڈ","کوئی بھی متن یا لنک","صرف ہندسے (جفت طوالت)"
+]);
+L("fa",[
+"تکی","دسته‌ای","تاریخچه","ذخیره","ذخیره همه","اشتراک‌گذاری","ادغام","تنظیمات","پاک کردن","مثلاً {ex}",
+"جداسازی با: ویرگول، نقطه، فاصله","جداسازی با: خط جدید","آماده ساخت بارکد","در پایین متن یا عدد بنویسید، بارکد خودکار ساخته می‌شود.","حالت دسته‌ای","در پایین چند کد بنویسید. هر بخش که با ویرگول، نقطه یا فاصله جدا شود یک بارکد می‌شود.","در پایین چند متن بنویسید، هر خط یکی. هر خط یک بارکد می‌شود.","{type} · {n} نویسه","{n} بارکد","{n} تکراری نادیده گرفته شد",
+"کتابخانه بارکد بارگیری نشد، پس فقط Code 128 در دسترس است.","ردشده: {list}.","(قالب {type}: {hint})","ابتدا کد را وارد کنید","{n} بارکد در گالری ذخیره شد","{n} بارکد دانلود شد","تصویر ادغام‌شده ذخیره شد","اشتراک‌گذاری در دسترس نیست، از ذخیره استفاده کنید","پیش‌فرض: {name}","ناموفق: {e}",
+"کیفیت برای جا شدن در حافظه کاهش یافت","هنوز تاریخچه‌ای نیست","کدهایی که ذخیره یا به اشتراک بگذارید اینجا دیده می‌شوند.","تکی","دسته‌ای","برای باز کردن لمس کنید","پاک کردن کل تاریخچه","نوع بارکد","برای استفاده روی یک نوع بزنید. برای پیش‌فرض کردن ★ را بزنید.","جستجوی نوع بارکد…",
+"نوع مطابقی نیست.","پیش‌فرض","1D · عمومی","1D · خرده‌فروشی و کالا","1D · صنعتی و ویژه","2D","تنظیمات","بارکد","پهنای خط","ارتفاع",
+"ارتفاع فقط برای بارکدهای 1D اعمال می‌شود. در 2D اندازه از پهنای خط پیروی می‌کند.","تصویر ذخیره‌شده","کیفیت","استاندارد","HD","Full HD","4K","قالب","واضح‌ترین","فایل کوچک‌تر",
+"اندازه پیش‌نمایش","بزرگ","متوسط","کوچک","فهرست","واترمارک «by aLeMaX»","زبان","پیروی از سیستم","درباره","تأیید",
+"زبان","بستن","توسعه‌دهنده","ایمیل","نسخه","مجوز","متن‌باز · MIT","کد منبع","کتابخانه‌های شخص ثالث","رقم",
+"فقط رقم","هر نویسه ASCII","متن یا عدد","کدهای AI داخل پرانتز","هر متن یا پیوند","فقط رقم (طول زوج)"
+]);
+L("tr",[
+"Tekli","Toplu","Geçmiş","Kaydet","Tümünü kaydet","Paylaş","Birleştir","Ayarlar","Temizle","örn. {ex}",
+"Ayırıcı: virgül, nokta, boşluk","Ayırıcı: yeni satır","Barkod oluşturmaya hazır","Aşağıya metin veya sayı yazın, barkod otomatik görünür.","Toplu mod","Aşağıya birkaç kod yazın. Virgül, nokta veya boşlukla ayrılan her parça bir barkod olur.","Aşağıya birkaç metin yazın, satır başına bir tane. Her satır bir barkod olur.","{type} · {n} karakter","{n} barkod","{n} yinelenen yok sayıldı",
+"Barkod kitaplığı yüklenemedi, bu yüzden yalnızca Code 128 kullanılabilir.","Atlandı: {list}.","(Biçim {type}: {hint})","Önce bir kod girin","{n} barkod galeriye kaydedildi","{n} barkod indirildi","Birleştirilmiş görsel kaydedildi","Paylaşım kullanılamıyor, Kaydet'i kullanın","Varsayılan: {name}","Başarısız: {e}",
+"Bellek sınırına uymak için kalite düşürüldü","Henüz geçmiş yok","Kaydettiğiniz veya paylaştığınız kodlar burada görünür.","Tekli","Toplu","açmak için dokunun","Tüm geçmişi sil","Barkod türü","Kullanmak için bir türe dokunun. Varsayılan yapmak için ★ simgesine dokunun.","Barkod türü ara…",
+"Eşleşen tür yok.","Varsayılan","1D · Genel","1D · Perakende ve ürün","1D · Endüstriyel ve özel","2D","Ayarlar","Barkod","Çizgi genişliği","Yükseklik",
+"Yükseklik yalnızca 1D barkodlara uygulanır. 2D'de boyut çizgi genişliğine göre belirlenir.","Kaydedilen görsel","Kalite","Standart","HD","Full HD","4K","Biçim","en net","daha küçük dosya",
+"Önizleme boyutu","Büyük","Orta","Küçük","Liste","Filigran “by aLeMaX”","Dil","Sistemi izle","Hakkında","Tamam",
+"Dil","Kapat","Geliştirici","E-posta","Sürüm","Lisans","Açık kaynak · MIT","Kaynak kodu","Üçüncü taraf kitaplıklar","hane",
+"yalnızca rakam","herhangi bir ASCII karakteri","metin veya sayı","parantez içinde AI kodları","herhangi bir metin veya bağlantı","yalnızca rakam (çift uzunluk)"
+]);
+
+L("vi",[
+"Đơn","Hàng loạt","Lịch sử","Lưu","Lưu tất cả","Chia sẻ","Ghép","Cài đặt","Xóa","vd. {ex}",
+"Phân tách bằng: dấu phẩy, dấu chấm, khoảng trắng","Phân tách bằng: dòng mới","Sẵn sàng tạo mã vạch","Nhập văn bản hoặc số bên dưới, mã vạch sẽ tự hiện ra.","Chế độ hàng loạt","Nhập nhiều mã bên dưới. Mỗi phần cách nhau bằng dấu phẩy, dấu chấm hoặc khoảng trắng sẽ thành một mã vạch.","Nhập nhiều đoạn văn bản bên dưới, mỗi dòng một đoạn. Mỗi dòng sẽ thành một mã vạch.","{type} · {n} ký tự","{n} mã vạch","Đã bỏ qua {n} mã trùng",
+"Thư viện mã vạch chưa tải được nên chỉ dùng được Code 128.","Đã bỏ qua: {list}.","(Định dạng {type}: {hint})","Hãy nhập mã trước","Đã lưu {n} mã vạch vào thư viện ảnh","Đã tải {n} mã vạch","Đã lưu ảnh ghép","Không thể chia sẻ, hãy dùng Lưu","Mặc định: {name}","Thất bại: {e}",
+"Đã giảm chất lượng để vừa bộ nhớ","Chưa có lịch sử","Các mã bạn lưu hoặc chia sẻ sẽ hiện ở đây.","Đơn","Hàng loạt","chạm để mở","Xóa toàn bộ lịch sử","Loại mã vạch","Chạm vào một loại để dùng. Chạm ★ để đặt làm mặc định.","Tìm loại mã vạch…",
+"Không có loại phù hợp.","Mặc định","1D · Chung","1D · Bán lẻ & sản phẩm","1D · Công nghiệp & đặc biệt","2D","Cài đặt","Mã vạch","Độ rộng vạch","Chiều cao",
+"Chiều cao chỉ áp dụng cho mã vạch 1D. Với 2D, kích thước theo độ rộng vạch.","Ảnh được lưu","Chất lượng","Tiêu chuẩn","HD","Full HD","4K","Định dạng","nét nhất","tệp nhỏ hơn",
+"Kích thước xem trước","Lớn","Vừa","Nhỏ","Danh sách","Hình mờ “by aLeMaX”","Ngôn ngữ","Theo hệ thống","Giới thiệu","Xong",
+"Ngôn ngữ","Đóng","Nhà phát triển","Email","Phiên bản","Giấy phép","Mã nguồn mở · MIT","Mã nguồn","Thư viện bên thứ ba","chữ số",
+"chỉ chữ số","mọi ký tự ASCII","văn bản hoặc số","mã AI trong ngoặc","bất kỳ văn bản hoặc liên kết","chỉ chữ số (độ dài chẵn)"
+]);
+L("th",[
+"เดี่ยว","เป็นชุด","ประวัติ","บันทึก","บันทึกทั้งหมด","แชร์","รวม","ตั้งค่า","ล้าง","เช่น {ex}",
+"คั่นด้วย: จุลภาค จุด เว้นวรรค","คั่นด้วย: ขึ้นบรรทัดใหม่","พร้อมสร้างบาร์โค้ด","พิมพ์ข้อความหรือตัวเลขด้านล่าง บาร์โค้ดจะปรากฏอัตโนมัติ","โหมดเป็นชุด","พิมพ์หลายรหัสด้านล่าง แต่ละส่วนที่คั่นด้วยจุลภาค จุด หรือเว้นวรรคจะเป็นหนึ่งบาร์โค้ด","พิมพ์หลายข้อความด้านล่าง บรรทัดละหนึ่งรายการ แต่ละบรรทัดจะเป็นหนึ่งบาร์โค้ด","{type} · {n} ตัวอักษร","{n} บาร์โค้ด","ข้ามรายการซ้ำ {n} รายการ",
+"โหลดไลบรารีบาร์โค้ดไม่สำเร็จ จึงใช้ได้เฉพาะ Code 128","ข้าม: {list}","(รูปแบบ {type}: {hint})","กรุณาใส่รหัสก่อน","บันทึกบาร์โค้ด {n} รายการลงแกลเลอรีแล้ว","ดาวน์โหลดบาร์โค้ด {n} รายการแล้ว","บันทึกภาพรวมแล้ว","ใช้การแชร์ไม่ได้ ให้ใช้บันทึกแทน","ค่าเริ่มต้น: {name}","ล้มเหลว: {e}",
+"ลดคุณภาพลงเพื่อให้พอดีกับหน่วยความจำ","ยังไม่มีประวัติ","รหัสที่คุณบันทึกหรือแชร์จะแสดงที่นี่","เดี่ยว","เป็นชุด","แตะเพื่อเปิด","ล้างประวัติทั้งหมด","ประเภทบาร์โค้ด","แตะประเภทเพื่อใช้งาน แตะ ★ เพื่อตั้งเป็นค่าเริ่มต้น","ค้นหาประเภทบาร์โค้ด…",
+"ไม่พบประเภทที่ตรงกัน","ค่าเริ่มต้น","1D · ทั่วไป","1D · ค้าปลีกและสินค้า","1D · อุตสาหกรรมและพิเศษ","2D","ตั้งค่า","บาร์โค้ด","ความกว้างเส้น","ความสูง",
+"ความสูงใช้กับบาร์โค้ด 1D เท่านั้น ส่วน 2D ขนาดจะตามความกว้างเส้น","ภาพที่บันทึก","คุณภาพ","มาตรฐาน","HD","Full HD","4K","รูปแบบ","คมชัดที่สุด","ไฟล์เล็กกว่า",
+"ขนาดตัวอย่าง","ใหญ่","กลาง","เล็ก","รายการ","ลายน้ำ “by aLeMaX”","ภาษา","ตามระบบ","เกี่ยวกับ","เสร็จ",
+"ภาษา","ปิด","นักพัฒนา","อีเมล","เวอร์ชัน","สัญญาอนุญาต","โอเพนซอร์ส · MIT","ซอร์สโค้ด","ไลบรารีของบุคคลที่สาม","หลัก",
+"ตัวเลขเท่านั้น","อักขระ ASCII ใดก็ได้","ข้อความหรือตัวเลข","รหัส AI ในวงเล็บ","ข้อความหรือลิงก์ใดก็ได้","ตัวเลขเท่านั้น (ความยาวคู่)"
+]);
+L("fil",[
+"Isa","Batch","Kasaysayan","I-save","I-save lahat","Ibahagi","Pagsamahin","Mga setting","I-clear","hal. {ex}",
+"Paghiwalayin gamit ang: kuwit, tuldok, espasyo","Paghiwalayin gamit ang: bagong linya","Handa nang gumawa ng barcode","Mag-type ng teksto o numero sa ibaba at awtomatikong lalabas ang barcode.","Batch mode","Mag-type ng ilang code sa ibaba. Ang bawat bahaging pinaghiwalay ng kuwit, tuldok o espasyo ay magiging isang barcode.","Mag-type ng ilang teksto sa ibaba, isa bawat linya. Ang bawat linya ay magiging isang barcode.","{type} · {n} character","{n} barcode","{n} duplicate ang isinantabi",
+"Hindi nag-load ang barcode library, kaya Code 128 lang ang magagamit.","Nilaktawan: {list}.","(Format {type}: {hint})","Maglagay muna ng code","Na-save sa gallery ang {n} barcode","Na-download ang {n} barcode","Na-save ang pinagsamang larawan","Hindi available ang pagbabahagi, gamitin ang I-save","Default: {name}","Nabigo: {e}",
+"Ibinaba ang kalidad para magkasya sa memory","Wala pang kasaysayan","Lalabas dito ang mga code na sine-save o ibinabahagi mo.","Isa","Batch","i-tap para buksan","I-clear ang lahat ng kasaysayan","Uri ng barcode","I-tap ang uri para gamitin. I-tap ang ★ para gawing default.","Maghanap ng uri ng barcode…",
+"Walang tugmang uri.","Default","1D · Pangkalahatan","1D · Retail at produkto","1D · Industriyal at espesyal","2D","Mga setting","Barcode","Lapad ng guhit","Taas",
+"Sa 1D barcode lang naaangkop ang taas. Sa 2D, sumusunod ang laki sa lapad ng guhit.","Naka-save na larawan","Kalidad","Standard","HD","Full HD","4K","Format","pinakamalinaw","mas maliit na file",
+"Laki ng preview","Malaki","Katamtaman","Maliit","Listahan","Watermark “by aLeMaX”","Wika","Sundan ang system","Tungkol","Tapos na",
+"Wika","Isara","Developer","Email","Bersyon","Lisensya","Open source · MIT","Source code","Mga third-party na library","digit",
+"digit lang","anumang ASCII character","teksto o numero","mga AI code sa loob ng panaklong","anumang teksto o link","digit lang (even na haba)"
+]);
+
+L("es",[
+"Individual","Lote","Historial","Guardar","Guardar todo","Compartir","Unir","Ajustes","Borrar","p. ej. {ex}",
+"Separar con: coma, punto, espacio","Separar con: salto de línea","Listo para crear códigos de barras","Escribe texto o números abajo y el código de barras aparece automáticamente.","Modo lote","Escribe varios códigos abajo. Cada parte separada por coma, punto o espacio se convierte en un código de barras.","Escribe varios textos abajo, uno por línea. Cada línea se convierte en un código de barras.","{type} · {n} caracteres","{n} códigos de barras","{n} duplicados ignorados",
+"La biblioteca de códigos de barras no cargó, así que solo está disponible Code 128.","Omitidos: {list}.","(Formato {type}: {hint})","Primero escribe un código","{n} códigos de barras guardados en la galería","{n} códigos de barras descargados","Imagen combinada guardada","Compartir no está disponible, usa Guardar","Predeterminado: {name}","Error: {e}",
+"Se redujo la calidad para caber en la memoria","Aún no hay historial","Los códigos que guardes o compartas aparecerán aquí.","Individual","Lote","toca para abrir","Borrar todo el historial","Tipo de código de barras","Toca un tipo para usarlo. Toca ★ para hacerlo predeterminado.","Buscar tipos de código de barras…",
+"Ningún tipo coincide.","Predeterminado","1D · General","1D · Comercio y productos","1D · Industrial y especial","2D","Ajustes","Código de barras","Ancho de barra","Altura",
+"La altura solo se aplica a códigos 1D. En 2D, el tamaño depende del ancho de barra.","Imagen guardada","Calidad","Estándar","HD","Full HD","4K","Formato","más nítido","archivo más pequeño",
+"Tamaño de vista previa","Grande","Mediano","Pequeño","Lista","Marca de agua “by aLeMaX”","Idioma","Seguir el sistema","Acerca de","Listo",
+"Idioma","Cerrar","Desarrollador","Correo","Versión","Licencia","Código abierto · MIT","Código fuente","Bibliotecas de terceros","dígitos",
+"solo dígitos","cualquier carácter ASCII","texto o números","códigos AI entre paréntesis","cualquier texto o enlace","solo dígitos (longitud par)"
+]);
+L("fr",[
+"Unique","Lot","Historique","Enregistrer","Tout enregistrer","Partager","Fusionner","Réglages","Effacer","p. ex. {ex}",
+"Séparer par : virgule, point, espace","Séparer par : saut de ligne","Prêt à créer des codes-barres","Saisissez du texte ou des chiffres ci-dessous, le code-barres apparaît automatiquement.","Mode lot","Saisissez plusieurs codes ci-dessous. Chaque partie séparée par une virgule, un point ou un espace devient un code-barres.","Saisissez plusieurs textes ci-dessous, un par ligne. Chaque ligne devient un code-barres.","{type} · {n} caractères","{n} codes-barres","{n} doublons ignorés",
+"La bibliothèque de codes-barres n'a pas chargé, seul Code 128 est disponible.","Ignorés : {list}.","(Format {type} : {hint})","Saisissez d'abord un code","{n} codes-barres enregistrés dans la galerie","{n} codes-barres téléchargés","Image combinée enregistrée","Partage indisponible, utilisez Enregistrer","Par défaut : {name}","Échec : {e}",
+"Qualité réduite pour tenir en mémoire","Aucun historique pour l'instant","Les codes que vous enregistrez ou partagez apparaîtront ici.","Unique","Lot","touchez pour ouvrir","Effacer tout l'historique","Type de code-barres","Touchez un type pour l'utiliser. Touchez ★ pour le définir par défaut.","Rechercher un type de code-barres…",
+"Aucun type correspondant.","Par défaut","1D · Général","1D · Commerce et produits","1D · Industriel et spécial","2D","Réglages","Code-barres","Largeur des barres","Hauteur",
+"La hauteur ne s'applique qu'aux codes 1D. En 2D, la taille suit la largeur des barres.","Image enregistrée","Qualité","Standard","HD","Full HD","4K","Format","le plus net","fichier plus léger",
+"Taille de l'aperçu","Grand","Moyen","Petit","Liste","Filigrane « by aLeMaX »","Langue","Suivre le système","À propos","Terminé",
+"Langue","Fermer","Développeur","E-mail","Version","Licence","Open source · MIT","Code source","Bibliothèques tierces","chiffres",
+"chiffres uniquement","tout caractère ASCII","texte ou chiffres","codes AI entre parenthèses","tout texte ou lien","chiffres uniquement (longueur paire)"
+]);
+L("de",[
+"Einzeln","Stapel","Verlauf","Speichern","Alle speichern","Teilen","Zusammenfügen","Einstellungen","Leeren","z. B. {ex}",
+"Trennen mit: Komma, Punkt, Leerzeichen","Trennen mit: Zeilenumbruch","Bereit zum Erstellen von Barcodes","Gib unten Text oder Zahlen ein, der Barcode erscheint automatisch.","Stapelmodus","Gib unten mehrere Codes ein. Jeder durch Komma, Punkt oder Leerzeichen getrennte Teil wird ein Barcode.","Gib unten mehrere Texte ein, einen pro Zeile. Jede Zeile wird ein Barcode.","{type} · {n} Zeichen","{n} Barcodes","{n} Duplikate ignoriert",
+"Die Barcode-Bibliothek wurde nicht geladen, daher ist nur Code 128 verfügbar.","Übersprungen: {list}.","(Format {type}: {hint})","Gib zuerst einen Code ein","{n} Barcodes in der Galerie gespeichert","{n} Barcodes heruntergeladen","Kombiniertes Bild gespeichert","Teilen nicht verfügbar, nutze Speichern","Standard: {name}","Fehlgeschlagen: {e}",
+"Qualität gesenkt, damit es in den Speicher passt","Noch kein Verlauf","Codes, die du speicherst oder teilst, erscheinen hier.","Einzeln","Stapel","zum Öffnen tippen","Gesamten Verlauf löschen","Barcode-Typ","Tippe auf einen Typ, um ihn zu verwenden. Tippe auf ★, um ihn als Standard festzulegen.","Barcode-Typen suchen…",
+"Kein passender Typ.","Standard","1D · Allgemein","1D · Handel & Produkte","1D · Industrie & Spezial","2D","Einstellungen","Barcode","Strichbreite","Höhe",
+"Die Höhe gilt nur für 1D-Barcodes. Bei 2D richtet sich die Größe nach der Strichbreite.","Gespeichertes Bild","Qualität","Standard","HD","Full HD","4K","Format","am schärfsten","kleinere Datei",
+"Vorschaugröße","Groß","Mittel","Klein","Liste","Wasserzeichen „by aLeMaX“","Sprache","System folgen","Info","Fertig",
+"Sprache","Schließen","Entwickler","E-Mail","Version","Lizenz","Open Source · MIT","Quellcode","Bibliotheken von Drittanbietern","Ziffern",
+"nur Ziffern","beliebiges ASCII-Zeichen","Text oder Zahlen","AI-Codes in Klammern","beliebiger Text oder Link","nur Ziffern (gerade Länge)"
+]);
+
+L("pt",[
+"Único","Lote","Histórico","Salvar","Salvar tudo","Compartilhar","Unir","Configurações","Limpar","ex.: {ex}",
+"Separe com: vírgula, ponto, espaço","Separe com: nova linha","Pronto para criar códigos de barras","Digite texto ou números abaixo e o código de barras aparece automaticamente.","Modo lote","Digite vários códigos abaixo. Cada parte separada por vírgula, ponto ou espaço vira um código de barras.","Digite vários textos abaixo, um por linha. Cada linha vira um código de barras.","{type} · {n} caracteres","{n} códigos de barras","{n} duplicados ignorados",
+"A biblioteca de códigos de barras não carregou, então só o Code 128 está disponível.","Ignorados: {list}.","(Formato {type}: {hint})","Digite um código primeiro","{n} códigos de barras salvos na galeria","{n} códigos de barras baixados","Imagem combinada salva","Compartilhar não está disponível, use Salvar","Padrão: {name}","Falhou: {e}",
+"Qualidade reduzida para caber na memória","Ainda não há histórico","Os códigos que você salvar ou compartilhar aparecerão aqui.","Único","Lote","toque para abrir","Limpar todo o histórico","Tipo de código de barras","Toque em um tipo para usá-lo. Toque em ★ para torná-lo padrão.","Buscar tipos de código de barras…",
+"Nenhum tipo correspondente.","Padrão","1D · Geral","1D · Varejo e produtos","1D · Industrial e especial","2D","Configurações","Código de barras","Largura da barra","Altura",
+"A altura só vale para códigos 1D. Em 2D, o tamanho segue a largura da barra.","Imagem salva","Qualidade","Padrão","HD","Full HD","4K","Formato","mais nítido","arquivo menor",
+"Tamanho da prévia","Grande","Médio","Pequeno","Lista","Marca-d'água “by aLeMaX”","Idioma","Seguir o sistema","Sobre","Concluído",
+"Idioma","Fechar","Desenvolvedor","E-mail","Versão","Licença","Código aberto · MIT","Código-fonte","Bibliotecas de terceiros","dígitos",
+"somente dígitos","qualquer caractere ASCII","texto ou números","códigos AI entre parênteses","qualquer texto ou link","somente dígitos (comprimento par)"
+]);
+L("it",[
+"Singolo","Lotto","Cronologia","Salva","Salva tutto","Condividi","Unisci","Impostazioni","Cancella","es. {ex}",
+"Separa con: virgola, punto, spazio","Separa con: a capo","Pronto per creare codici a barre","Scrivi testo o numeri qui sotto e il codice a barre appare automaticamente.","Modalità lotto","Scrivi più codici qui sotto. Ogni parte separata da virgola, punto o spazio diventa un codice a barre.","Scrivi più testi qui sotto, uno per riga. Ogni riga diventa un codice a barre.","{type} · {n} caratteri","{n} codici a barre","{n} duplicati ignorati",
+"La libreria dei codici a barre non si è caricata, quindi è disponibile solo Code 128.","Saltati: {list}.","(Formato {type}: {hint})","Inserisci prima un codice","{n} codici a barre salvati nella galleria","{n} codici a barre scaricati","Immagine unita salvata","Condivisione non disponibile, usa Salva","Predefinito: {name}","Non riuscito: {e}",
+"Qualità ridotta per stare in memoria","Ancora nessuna cronologia","I codici che salvi o condividi compariranno qui.","Singolo","Lotto","tocca per aprire","Cancella tutta la cronologia","Tipo di codice a barre","Tocca un tipo per usarlo. Tocca ★ per renderlo predefinito.","Cerca tipi di codice a barre…",
+"Nessun tipo corrispondente.","Predefinito","1D · Generale","1D · Vendita al dettaglio e prodotti","1D · Industriale e speciale","2D","Impostazioni","Codice a barre","Larghezza barre","Altezza",
+"L'altezza vale solo per i codici 1D. Per i 2D, la dimensione segue la larghezza delle barre.","Immagine salvata","Qualità","Standard","HD","Full HD","4K","Formato","più nitido","file più piccolo",
+"Dimensione anteprima","Grande","Media","Piccola","Elenco","Filigrana “by aLeMaX”","Lingua","Segui il sistema","Info","Fine",
+"Lingua","Chiudi","Sviluppatore","E-mail","Versione","Licenza","Open source · MIT","Codice sorgente","Librerie di terze parti","cifre",
+"solo cifre","qualsiasi carattere ASCII","testo o numeri","codici AI tra parentesi","qualsiasi testo o link","solo cifre (lunghezza pari)"
+]);
+L("nl",[
+"Enkel","Batch","Geschiedenis","Opslaan","Alles opslaan","Delen","Samenvoegen","Instellingen","Wissen","bijv. {ex}",
+"Scheiden met: komma, punt, spatie","Scheiden met: nieuwe regel","Klaar om barcodes te maken","Typ hieronder tekst of cijfers, de barcode verschijnt automatisch.","Batchmodus","Typ hieronder meerdere codes. Elk deel gescheiden door een komma, punt of spatie wordt één barcode.","Typ hieronder meerdere teksten, één per regel. Elke regel wordt één barcode.","{type} · {n} tekens","{n} barcodes","{n} duplicaten genegeerd",
+"De barcodebibliotheek is niet geladen, dus alleen Code 128 is beschikbaar.","Overgeslagen: {list}.","(Indeling {type}: {hint})","Voer eerst een code in","{n} barcodes opgeslagen in de galerij","{n} barcodes gedownload","Samengevoegde afbeelding opgeslagen","Delen niet beschikbaar, gebruik Opslaan","Standaard: {name}","Mislukt: {e}",
+"Kwaliteit verlaagd om in het geheugen te passen","Nog geen geschiedenis","Codes die je opslaat of deelt verschijnen hier.","Enkel","Batch","tik om te openen","Hele geschiedenis wissen","Barcodetype","Tik op een type om het te gebruiken. Tik op ★ om het standaard te maken.","Barcodetypen zoeken…",
+"Geen overeenkomend type.","Standaard","1D · Algemeen","1D · Retail en producten","1D · Industrieel en speciaal","2D","Instellingen","Barcode","Streepbreedte","Hoogte",
+"Hoogte geldt alleen voor 1D-barcodes. Bij 2D volgt de grootte de streepbreedte.","Opgeslagen afbeelding","Kwaliteit","Standaard","HD","Full HD","4K","Indeling","scherpst","kleiner bestand",
+"Voorbeeldgrootte","Groot","Middel","Klein","Lijst","Watermerk “by aLeMaX”","Taal","Systeem volgen","Over","Klaar",
+"Taal","Sluiten","Ontwikkelaar","E-mail","Versie","Licentie","Open source · MIT","Broncode","Bibliotheken van derden","cijfers",
+"alleen cijfers","elk ASCII-teken","tekst of cijfers","AI-codes tussen haakjes","elke tekst of link","alleen cijfers (even lengte)"
+]);
+L("ru",[
+"Один","Пакет","История","Сохранить","Сохранить все","Поделиться","Объединить","Настройки","Очистить","напр. {ex}",
+"Разделители: запятая, точка, пробел","Разделитель: новая строка","Готово к созданию штрихкодов","Введите ниже текст или цифры, штрихкод появится автоматически.","Пакетный режим","Введите ниже несколько кодов. Каждая часть, разделённая запятой, точкой или пробелом, станет отдельным штрихкодом.","Введите ниже несколько текстов, по одному в строке. Каждая строка станет отдельным штрихкодом.","{type} · символов: {n}","Штрихкодов: {n}","Пропущено дубликатов: {n}",
+"Библиотека штрихкодов не загрузилась, поэтому доступен только Code 128.","Пропущено: {list}.","(Формат {type}: {hint})","Сначала введите код","Штрихкодов сохранено в галерее: {n}","Штрихкодов скачано: {n}","Объединённое изображение сохранено","Функция «Поделиться» недоступна, используйте «Сохранить»","По умолчанию: {name}","Ошибка: {e}",
+"Качество снижено, чтобы уместиться в памяти","Истории пока нет","Здесь появятся коды, которые вы сохраните или отправите.","Один","Пакет","нажмите, чтобы открыть","Очистить всю историю","Тип штрихкода","Нажмите на тип, чтобы использовать его. Нажмите ★, чтобы сделать его типом по умолчанию.","Поиск типа штрихкода…",
+"Подходящих типов нет.","По умолчанию","1D · Общие","1D · Розница и товары","1D · Промышленные и специальные","2D","Настройки","Штрихкод","Ширина линий","Высота",
+"Высота применяется только к 1D-штрихкодам. У 2D размер зависит от ширины линий.","Сохраняемое изображение","Качество","Стандартное","HD","Full HD","4K","Формат","самое чёткое","файл меньше",
+"Размер превью","Крупный","Средний","Мелкий","Список","Водяной знак «by aLeMaX»","Язык","Как в системе","О приложении","Готово",
+"Язык","Закрыть","Разработчик","Эл. почта","Версия","Лицензия","Открытый код · MIT","Исходный код","Сторонние библиотеки","цифр",
+"только цифры","любой символ ASCII","текст или цифры","AI-коды в скобках","любой текст или ссылка","только цифры (чётная длина)"
+]);
+
+L("pl",[
+"Pojedynczy","Wsadowy","Historia","Zapisz","Zapisz wszystko","Udostępnij","Połącz","Ustawienia","Wyczyść","np. {ex}",
+"Rozdzielaj: przecinek, kropka, spacja","Rozdzielaj: nowa linia","Gotowe do tworzenia kodów kreskowych","Wpisz poniżej tekst lub liczby, a kod kreskowy pojawi się automatycznie.","Tryb wsadowy","Wpisz poniżej kilka kodów. Każda część oddzielona przecinkiem, kropką lub spacją stanie się jednym kodem kreskowym.","Wpisz poniżej kilka tekstów, po jednym w wierszu. Każdy wiersz stanie się jednym kodem kreskowym.","{type} · znaków: {n}","Kody kreskowe: {n}","Pominięto duplikatów: {n}",
+"Biblioteka kodów kreskowych nie załadowała się, dostępny jest tylko Code 128.","Pominięto: {list}.","(Format {type}: {hint})","Najpierw wpisz kod","Zapisano w galerii kodów kreskowych: {n}","Pobrano kodów kreskowych: {n}","Zapisano połączony obraz","Udostępnianie niedostępne, użyj Zapisz","Domyślny: {name}","Niepowodzenie: {e}",
+"Obniżono jakość, aby zmieścić się w pamięci","Brak historii","Zapisane lub udostępnione kody pojawią się tutaj.","Pojedynczy","Wsadowy","dotknij, aby otworzyć","Wyczyść całą historię","Typ kodu kreskowego","Dotknij typu, aby go użyć. Dotknij ★, aby ustawić go jako domyślny.","Szukaj typów kodów kreskowych…",
+"Brak pasującego typu.","Domyślny","1D · Ogólne","1D · Handel i produkty","1D · Przemysłowe i specjalne","2D","Ustawienia","Kod kreskowy","Szerokość kresek","Wysokość",
+"Wysokość dotyczy tylko kodów 1D. W 2D rozmiar zależy od szerokości kresek.","Zapisywany obraz","Jakość","Standardowa","HD","Full HD","4K","Format","najostrzejszy","mniejszy plik",
+"Rozmiar podglądu","Duży","Średni","Mały","Lista","Znak wodny „by aLeMaX”","Język","Zgodnie z systemem","O aplikacji","Gotowe",
+"Język","Zamknij","Programista","E-mail","Wersja","Licencja","Open source · MIT","Kod źródłowy","Biblioteki firm trzecich","cyfr",
+"tylko cyfry","dowolny znak ASCII","tekst lub liczby","kody AI w nawiasach","dowolny tekst lub link","tylko cyfry (parzysta długość)"
+]);
+L("uk",[
+"Один","Пакет","Історія","Зберегти","Зберегти все","Поділитися","Об'єднати","Налаштування","Очистити","напр. {ex}",
+"Роздільники: кома, крапка, пробіл","Роздільник: новий рядок","Готово до створення штрихкодів","Введіть нижче текст або цифри, штрихкод з'явиться автоматично.","Пакетний режим","Введіть нижче кілька кодів. Кожна частина, розділена комою, крапкою або пробілом, стане окремим штрихкодом.","Введіть нижче кілька текстів, по одному в рядку. Кожен рядок стане окремим штрихкодом.","{type} · символів: {n}","Штрихкодів: {n}","Пропущено дублікатів: {n}",
+"Бібліотека штрихкодів не завантажилась, тому доступний лише Code 128.","Пропущено: {list}.","(Формат {type}: {hint})","Спершу введіть код","Штрихкодів збережено в галереї: {n}","Штрихкодів завантажено: {n}","Об'єднане зображення збережено","Функція «Поділитися» недоступна, скористайтеся «Зберегти»","За замовчуванням: {name}","Помилка: {e}",
+"Якість знижено, щоб вмістити в пам'ять","Історії ще немає","Тут з'являться коди, які ви збережете або надішлете.","Один","Пакет","торкніться, щоб відкрити","Очистити всю історію","Тип штрихкоду","Торкніться типу, щоб його використати. Торкніться ★, щоб зробити його типовим.","Пошук типу штрихкоду…",
+"Відповідних типів немає.","За замовчуванням","1D · Загальні","1D · Роздріб і товари","1D · Промислові та спеціальні","2D","Налаштування","Штрихкод","Ширина ліній","Висота",
+"Висота застосовується лише до 1D-штрихкодів. У 2D розмір залежить від ширини ліній.","Зображення для збереження","Якість","Стандартна","HD","Full HD","4K","Формат","найчіткіше","менший файл",
+"Розмір попереднього перегляду","Великий","Середній","Малий","Список","Водяний знак «by aLeMaX»","Мова","Як у системі","Про застосунок","Готово",
+"Мова","Закрити","Розробник","Ел. пошта","Версія","Ліцензія","Відкритий код · MIT","Вихідний код","Сторонні бібліотеки","цифр",
+"лише цифри","будь-який символ ASCII","текст або цифри","AI-коди в дужках","будь-який текст або посилання","лише цифри (парна довжина)"
+]);
+L("sw",[
+"Moja","Kundi","Historia","Hifadhi","Hifadhi zote","Shiriki","Unganisha","Mipangilio","Futa","mf. {ex}",
+"Tenganisha kwa: koma, nukta, nafasi","Tenganisha kwa: mstari mpya","Tayari kutengeneza msimbopau","Andika maandishi au namba hapa chini, msimbopau utatokea wenyewe.","Hali ya kundi","Andika misimbo kadhaa hapa chini. Kila sehemu iliyotenganishwa kwa koma, nukta au nafasi inakuwa msimbopau mmoja.","Andika maandishi kadhaa hapa chini, moja kwa kila mstari. Kila mstari unakuwa msimbopau mmoja.","{type} · herufi {n}","Misimbopau {n}","Marudio {n} yamepuuzwa",
+"Maktaba ya msimbopau haikupakiwa, kwa hiyo Code 128 pekee inapatikana.","Yamerukwa: {list}.","(Umbizo {type}: {hint})","Weka msimbo kwanza","Misimbopau {n} imehifadhiwa kwenye ghala","Misimbopau {n} imepakuliwa","Picha iliyounganishwa imehifadhiwa","Kushiriki hakupatikani, tumia Hifadhi","Chaguomsingi: {name}","Imeshindwa: {e}",
+"Ubora umepunguzwa ili kutosha kwenye kumbukumbu","Bado hakuna historia","Misimbo unayohifadhi au kushiriki itaonekana hapa.","Moja","Kundi","gusa kufungua","Futa historia yote","Aina ya msimbopau","Gusa aina ili kuitumia. Gusa ★ ili iwe chaguomsingi.","Tafuta aina za msimbopau…",
+"Hakuna aina inayolingana.","Chaguomsingi","1D · Kawaida","1D · Rejareja na bidhaa","1D · Viwandani na maalum","2D","Mipangilio","Msimbopau","Upana wa mistari","Urefu",
+"Urefu unatumika kwa misimbopau ya 1D pekee. Kwa 2D, ukubwa hufuata upana wa mistari.","Picha inayohifadhiwa","Ubora","Kawaida","HD","Full HD","4K","Umbizo","kali zaidi","faili ndogo",
+"Ukubwa wa onyesho","Kubwa","Wastani","Ndogo","Orodha","Alama ya maji “by aLeMaX”","Lugha","Fuata mfumo","Kuhusu","Imekamilika",
+"Lugha","Funga","Msanidi","Barua pepe","Toleo","Leseni","Chanzo huria · MIT","Msimbo chanzo","Maktaba za wengine","tarakimu",
+"tarakimu pekee","herufi yoyote ya ASCII","maandishi au namba","misimbo ya AI ndani ya mabano","maandishi au kiungo chochote","tarakimu pekee (urefu shufwa)"
+]);
+
+
 /* ---------- Jenis barcode ---------- */
 const upper=s=>s.toUpperCase();
 const evenPad=s=>/^\d+$/.test(s)&&s.length%2?"0"+s:s;
-const G1="1D · Umum",G2="1D · Ritel & produk",G3="1D · Industri & khusus",G4="2D";
 const mk=(g,d,arr)=>arr.map(o=>Object.assign({g:g,d:d},o));
 const TYPES=[].concat(
- mk(G1,"1d",[
-  {id:"code128",n:"Code 128",ex:"ABC-12345",h:"huruf, angka, simbol (ASCII)",own:1},
-  {id:"gs1-128",n:"GS1-128",ex:"(01)09506000134352(17)261231",h:"kode AI dalam kurung, mis. (01)…"},
-  {id:"code39",n:"Code 39",ex:"CODE-39",h:"A–Z, 0–9, spasi, - . $ / + %",prep:upper},
-  {id:"code39ext",n:"Code 39 Extended",ex:"Code-39 Ext",h:"semua karakter ASCII"},
-  {id:"code93",n:"Code 93",ex:"CODE93",h:"A–Z, 0–9, spasi, - . $ / + %",prep:upper},
-  {id:"code93ext",n:"Code 93 Extended",ex:"Code93 Ext",h:"semua karakter ASCII"},
-  {id:"rationalizedCodabar",k:"codabar",n:"Codabar",ex:"A123456A",h:"angka & - $ : / . +, awal/akhir A–D",prep:upper},
-  {id:"interleaved2of5",k:"itf",n:"ITF (Interleaved 2 of 5)",ex:"12345670",h:"angka saja (otomatis digenapkan)",prep:evenPad},
-  {id:"itf14",n:"ITF-14",ex:"1234567890123",h:"13 atau 14 digit"}
+ mk("g1","1d",[
+  {id:"code128",n:"Code 128",ex:"ABC-12345",h:"{ascii}",own:1},
+  {id:"gs1-128",n:"GS1-128",ex:"(01)09506000134352(17)261231",h:"{ai}"},
+  {id:"code39",n:"Code 39",ex:"CODE-39",h:"A–Z 0–9 - . $ / + % ␣",prep:upper},
+  {id:"code39ext",n:"Code 39 Extended",ex:"Code-39 Ext",h:"{ascii}"},
+  {id:"code93",n:"Code 93",ex:"CODE93",h:"A–Z 0–9 - . $ / + % ␣",prep:upper},
+  {id:"code93ext",n:"Code 93 Extended",ex:"Code93 Ext",h:"{ascii}"},
+  {id:"rationalizedCodabar",k:"codabar",n:"Codabar",ex:"A123456A",h:"0–9 - $ : / . +  ·  A–D",prep:upper},
+  {id:"interleaved2of5",k:"itf",n:"ITF (Interleaved 2 of 5)",ex:"12345670",h:"{even}",prep:evenPad},
+  {id:"itf14",n:"ITF-14",ex:"1234567890123",h:"13/14 {d}"}
  ]),
- mk(G2,"1d",[
-  {id:"ean13",n:"EAN-13",ex:"5901234123457",h:"12 atau 13 digit"},
-  {id:"ean8",n:"EAN-8",ex:"96385074",h:"7 atau 8 digit"},
-  {id:"upca",n:"UPC-A",ex:"012345678905",h:"11 atau 12 digit"},
-  {id:"upce",n:"UPC-E",ex:"01234565",h:"7 atau 8 digit"},
-  {id:"isbn",n:"ISBN",ex:"978-1-56581-231-4",h:"10/13 digit, boleh pakai -"},
-  {id:"issn",n:"ISSN",ex:"0311-175X",h:"8 karakter (2 × 4)"},
-  {id:"ismn",n:"ISMN",ex:"979-0-2600-0043-8",h:"notasi musik, 13 digit"},
-  {id:"ean5",n:"EAN-5 (tambahan)",ex:"90200",h:"5 digit"},
-  {id:"ean2",n:"EAN-2 (tambahan)",ex:"05",h:"2 digit"}
+ mk("g2","1d",[
+  {id:"ean13",n:"EAN-13",ex:"5901234123457",h:"12/13 {d}"},
+  {id:"ean8",n:"EAN-8",ex:"96385074",h:"7/8 {d}"},
+  {id:"upca",n:"UPC-A",ex:"012345678905",h:"11/12 {d}"},
+  {id:"upce",n:"UPC-E",ex:"01234565",h:"7/8 {d}"},
+  {id:"isbn",n:"ISBN",ex:"978-1-56581-231-4",h:"10/13 {d}"},
+  {id:"issn",n:"ISSN",ex:"0311-175X",h:"0000-000X"},
+  {id:"ismn",n:"ISMN",ex:"979-0-2600-0043-8",h:"13 {d}"},
+  {id:"ean5",n:"EAN-5",ex:"90200",h:"5 {d}"},
+  {id:"ean2",n:"EAN-2",ex:"05",h:"2 {d}"}
  ]),
- mk(G3,"1d",[
-  {id:"code2of5",n:"Industrial 2 of 5",ex:"12345678",h:"angka saja"},
-  {id:"matrix2of5",n:"Matrix 2 of 5",ex:"12345678",h:"angka saja"},
-  {id:"code11",n:"Code 11",ex:"123-4567",h:"angka dan tanda -"},
-  {id:"msi",n:"MSI Plessey",ex:"1234567",h:"angka saja"},
-  {id:"plessey",n:"Plessey",ex:"01234ABCD",h:"angka dan A–F"},
-  {id:"telepen",n:"Telepen",ex:"Telepen123",h:"semua karakter ASCII"},
-  {id:"telepennumeric",n:"Telepen Numeric",ex:"1234567890",h:"angka saja"},
-  {id:"pharmacode",n:"Pharmacode",ex:"117480",h:"angka 3–131070",nt:1},
-  {id:"code32",n:"Code 32 (farmasi Italia)",ex:"01234567",h:"8 digit"},
-  {id:"pzn",n:"PZN (farmasi Jerman)",ex:"1234567",h:"7 atau 8 digit"},
-  {id:"databaromni",n:"GS1 DataBar Omnidirectional",ex:"(01)24012345678905",h:"(01) + 14 digit"},
-  {id:"databarexpanded",n:"GS1 DataBar Expanded",ex:"(01)98898765432106(3202)012345(15)991231",h:"kode AI dalam kurung"},
-  {id:"royalmail",n:"Royal Mail 4-State (RM4SCC)",ex:"LE28HS9Z",h:"huruf & angka",nt:1,nh:1},
-  {id:"postnet",n:"POSTNET",ex:"01234",h:"5, 9, atau 11 digit",nt:1,nh:1},
-  {id:"onecode",n:"USPS Intelligent Mail",ex:"0123456709498765432101234567891",h:"20–31 digit",nt:1,nh:1}
+ mk("g3","1d",[
+  {id:"code2of5",n:"Industrial 2 of 5",ex:"12345678",h:"{do}"},
+  {id:"matrix2of5",n:"Matrix 2 of 5",ex:"12345678",h:"{do}"},
+  {id:"code11",n:"Code 11",ex:"123-4567",h:"0–9 -"},
+  {id:"msi",n:"MSI Plessey",ex:"1234567",h:"{do}"},
+  {id:"plessey",n:"Plessey",ex:"01234ABCD",h:"0–9 A–F"},
+  {id:"telepen",n:"Telepen",ex:"Telepen123",h:"{ascii}"},
+  {id:"telepennumeric",n:"Telepen Numeric",ex:"1234567890",h:"{do}"},
+  {id:"pharmacode",n:"Pharmacode",ex:"117480",h:"3–131070",nt:1},
+  {id:"code32",n:"Code 32",ex:"01234567",h:"8 {d}"},
+  {id:"pzn",n:"PZN",ex:"1234567",h:"7/8 {d}"},
+  {id:"databaromni",n:"GS1 DataBar Omnidirectional",ex:"(01)24012345678905",h:"(01) + 14 {d}"},
+  {id:"databarexpanded",n:"GS1 DataBar Expanded",ex:"(01)98898765432106(3202)012345(15)991231",h:"{ai}"},
+  {id:"royalmail",n:"Royal Mail 4-State (RM4SCC)",ex:"LE28HS9Z",h:"A–Z 0–9",nt:1,nh:1},
+  {id:"postnet",n:"POSTNET",ex:"01234",h:"5/9/11 {d}",nt:1,nh:1},
+  {id:"onecode",n:"USPS Intelligent Mail",ex:"0123456709498765432101234567891",h:"20–31 {d}",nt:1,nh:1}
  ]),
- mk(G4,"2d",[
-  {id:"qrcode",n:"QR Code",ex:"https://example.com",h:"teks atau tautan apa saja"},
-  {id:"microqrcode",n:"Micro QR Code",ex:"12345",h:"teks pendek"},
-  {id:"datamatrix",n:"Data Matrix",ex:"DataMatrix-123",h:"teks atau angka"},
-  {id:"gs1datamatrix",n:"GS1 Data Matrix",ex:"(01)09506000134352(17)261231",h:"kode AI dalam kurung"},
-  {id:"azteccode",n:"Aztec Code",ex:"Aztec-123",h:"teks atau angka"},
-  {id:"pdf417",n:"PDF417",ex:"PDF417 contoh teks",h:"teks atau angka"},
-  {id:"hanxin",n:"Han Xin Code",ex:"HanXin-123",h:"teks atau angka"}
+ mk("g4","2d",[
+  {id:"qrcode",n:"QR Code",ex:"https://example.com",h:"{free}"},
+  {id:"microqrcode",n:"Micro QR Code",ex:"12345",h:"{txt}"},
+  {id:"datamatrix",n:"Data Matrix",ex:"DataMatrix-123",h:"{txt}"},
+  {id:"gs1datamatrix",n:"GS1 Data Matrix",ex:"(01)09506000134352(17)261231",h:"{ai}"},
+  {id:"azteccode",n:"Aztec Code",ex:"Aztec-123",h:"{txt}"},
+  {id:"pdf417",n:"PDF417",ex:"PDF417 text",h:"{txt}"},
+  {id:"hanxin",n:"Han Xin Code",ex:"HanXin-123",h:"{txt}"}
  ])
 );
 const TMAP={};TYPES.forEach(t=>{TMAP[t.id]=t;});
@@ -365,40 +902,73 @@ let defType="code128";
 try{const d=localStorage.getItem("def128");if(d&&TMAP[d])defType=d;}catch(e){}
 let curType=TMAP[defType];
 const fkey=t=>(t.k||t.id).replace(/[^\w]/g,"");
-// 1D: pisah koma/titik/spasi/baris baru. 2D (teks bebas, sering berisi spasi & titik): hanya baris baru.
-const parseBatch=v=>[...new Set((curType.d==="2d"?v.split(/[\r\n]+/):v.split(/[,.\s]+/)).map(x=>x.trim()).filter(Boolean))];
+const HINTKEY={d:"w_digit",do:"w_digits_only",ascii:"w_ascii",txt:"w_text",ai:"w_ai",free:"w_free",even:"w_even"};
+const hint=t=>t.h.replace(/\{(\w+)\}/g,(m,k)=>HINTKEY[k]?tr(HINTKEY[k]):m);
+// 1D: pisah koma/titik/spasi/baris baru. 2D (teks bebas): hanya baris baru.
+function splitBatch(v){return (curType.d==="2d"?v.split(/[\r\n]+/):v.split(/[,.\s]+/)).map(x=>x.trim()).filter(Boolean);}
+function parseBatch(v){const a=splitBatch(v),u=[...new Set(a)];parseBatch.dups=a.length-u.length;return u;}
+parseBatch.dups=0;
 
+/* ---------- Penggambar ---------- */
+const WM="by aLeMaX";
+const wmOn=()=>cfg.wm!==false;
+// k = pengali ukuran (1 = pratinjau; >1 untuk simpan HD/4K, digambar ulang agar tetap tajam)
+function drawCode128(cv,s,k){
+  k=k||1;
+  const m0=+$("w").value,mod=m0*k,bh=(+$("h").value)*k,quiet=10*mod,fs=(18+m0*2)*k;
+  const codes=encode(s);
+  const pat=codes.map(c=>P[c]).join("");
+  let total=0;for(const d of pat)total+=+d;
+  const wf=(10+m0*2)*k,wm=wmOn();
+  const W=total*mod+quiet*2,H=bh+fs+24*k+(wm?wf+10*k:0);
+  cv.width=W;cv.height=H;
+  const ctx=cv.getContext("2d");
+  ctx.fillStyle="#fff";ctx.fillRect(0,0,W,H);
+  ctx.fillStyle="#000";
+  let x=quiet,bar=true;
+  for(const d of pat){const w=+d*mod;if(bar)ctx.fillRect(x,8*k,w,bh);x+=w;bar=!bar;}
+  ctx.font=fs+"px monospace";ctx.textAlign="center";
+  ctx.fillText(s,W/2,bh+8*k+fs+4*k,W-10*k);
+  if(wm){ctx.font="italic "+wf+"px sans-serif";ctx.fillStyle="#666";ctx.fillText(WM,W/2,H-8*k);}
+}
 const bwipReady=()=>!!(window.bwipjs&&typeof window.bwipjs.toCanvas==="function");
-async function drawBwip(cv,s){
+async function drawBwip(cv,s,k){
+  k=k||1;
   if(!bwipReady()){const e=new Error("NOLIB");e.nolib=true;throw e;}
   const t=curType,sc=+$("w").value,bh=+$("h").value,two=t.d==="2d";
-  const scale=two?sc*3:sc;
+  const scale=(two?sc*3:sc)*k;
   const o={bcid:t.id,text:t.prep?t.prep(s):s,scale:scale,paddingwidth:10,paddingheight:10,backgroundcolor:"FFFFFF"};
-  if(!two&&!t.nh)o.height=Math.max(4,bh*25.4/(72*scale));
+  if(!two&&!t.nh)o.height=Math.max(4,bh*25.4/(72*(two?sc*3:sc)));
   if(!two&&!t.nt){o.includetext=true;o.textxalign="center";}
   const tmp=document.createElement("canvas");
   let r=window.bwipjs.toCanvas(tmp,o);
   if(r&&typeof r.then==="function")r=await r;
   const src=(r&&r.getContext)?r:tmp;
-  const wf=Math.max(12,Math.round(src.width/24));
-  const W=src.width,H=src.height+wf+14;
+  const wm=wmOn(),wf=Math.max(12,Math.round(src.width/24));
+  const W=src.width,H=src.height+(wm?wf+Math.round(14*k):0);
   cv.width=W;cv.height=H;
   const ctx=cv.getContext("2d");
   ctx.fillStyle="#fff";ctx.fillRect(0,0,W,H);
   ctx.drawImage(src,0,0);
-  ctx.font="italic "+wf+"px sans-serif";ctx.fillStyle="#666";ctx.textAlign="center";
-  ctx.fillText("by aLeMaX",W/2,H-8);
+  if(wm){ctx.font="italic "+wf+"px sans-serif";ctx.fillStyle="#666";ctx.textAlign="center";ctx.fillText(WM,W/2,H-Math.round(8*k));}
 }
-function drawTo(cv,s){return curType.own?Promise.resolve(drawCode128(cv,s)):drawBwip(cv,s);}
+function drawTo(cv,s,k){return curType.own?Promise.resolve(drawCode128(cv,s,k)):drawBwip(cv,s,k);}
 function errText(e){
-  if(e&&e.nolib)return "Pustaka jenis barcode belum termuat, jadi hanya Code 128 yang bisa dipakai.";
+  if(e&&e.nolib)return tr("err_nolib");
   let m=String((e&&e.message)||e||"");
-  const k=m.indexOf(": ");
-  if(/^bwipp\./.test(m)&&k>0)m=m.slice(k+2);
+  const i=m.indexOf(": ");
+  if(/^bwipp\./.test(m)&&i>0)m=m.slice(i+2);
   return m.slice(0,140);
 }
 
-const blobOf=cv=>new Promise(r=>cv.toBlob(r,"image/png"));
+/* ---------- Dasar ---------- */
+let mode="single",items=[],toastT;
+const isBatch=()=>mode==="batch";
+const tap=()=>{try{navigator.vibrate&&navigator.vibrate(10);}catch(e){}};
+const delay=ms=>new Promise(r=>setTimeout(r,ms));
+const mime=()=>cfg.f==="jpg"?"image/jpeg":"image/png";
+const ext=()=>cfg.f==="jpg"?"jpg":"png";
+const blobOf=cv=>new Promise(r=>cv.toBlob(r,mime(),0.92));
 const safe=s=>(s.replace(/[^\w-]/g,"_").slice(0,30)||"kode");
 
 /* ---------- Penyimpanan & berbagi ---------- */
@@ -410,16 +980,15 @@ function seq(){
 function toast(msg){
   const t=$("toast");
   t.textContent=msg;t.style.bottom=($("dock").offsetHeight+16)+"px";t.classList.add("show");
-  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2400);
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2600);
 }
-// Di APK (Capacitor) plugin native tersedia; di browser dipakai cara web biasa.
 const NP=()=>(window.Capacitor&&window.Capacitor.Plugins)||{};
 function toB64(b){return new Promise((res,rej)=>{const f=new FileReader();f.onload=()=>res(String(f.result).split(",")[1]);f.onerror=rej;f.readAsDataURL(b);});}
 async function writeImage(b,name){
   const pl=NP();
   if(pl.MediaSaver){
-    try{await pl.MediaSaver.save({data:await toB64(b),name:name});return true;}
-    catch(e){toast("Gagal menyimpan: "+((e&&e.message)||e));return false;}
+    try{await pl.MediaSaver.save({data:await toB64(b),name:name,mime:mime()});return true;}
+    catch(e){toast(tr("t_fail",{e:(e&&e.message)||e}));return false;}
   }
   const a=document.createElement("a");
   a.href=URL.createObjectURL(b);a.download=name;
@@ -427,64 +996,98 @@ async function writeImage(b,name){
   setTimeout(()=>URL.revokeObjectURL(a.href),4000);
   return true;
 }
-const where=()=>NP().MediaSaver?"tersimpan di galeri":"diunduh";
+// Kualitas: digambar ulang dengan pengali bulat k agar tetap tajam
+const QW={std:0,hd:1280,fhd:1920,uhd:3840},MAXPX=26e6;
+function kFor(w,h,ref){
+  const tw=QW[cfg.q];if(!tw)return 1;
+  let k=Math.max(1,Math.round(tw/ref));
+  while(k>1&&(w*k)*(h*k)>MAXPX)k--;
+  return k;
+}
+async function hiCanvas(it,k){
+  if(k<=1)return it.canvas;
+  const cv=document.createElement("canvas");await drawTo(cv,it.text,k);return cv;
+}
 async function saveList(list){
-  if(!list.length){toast("Isi kode dulu");return;}
+  if(!list.length){toast(tr("t_fill"));return;}
   let ok=0;
   for(const it of list){
-    if(await writeImage(await blobOf(it.canvas),seq()+"_"+fkey(curType)+"_"+safe(it.text)+".png"))ok++;
+    const cv=await hiCanvas(it,kFor(it.canvas.width,it.canvas.height,it.canvas.width));
+    if(await writeImage(await blobOf(cv),seq()+"_"+fkey(curType)+"_"+safe(it.text)+"."+ext()))ok++;
     if(!NP().MediaSaver&&list.length>1)await delay(350);
   }
-  if(ok){toast(ok+" barcode "+where());addHist();}
+  if(ok){toast(tr(NP().MediaSaver?"t_saved":"t_dl",{n:ok}));addHist();}
+}
+async function mergeSave(){
+  if(!items.length){toast(tr("t_fill"));return;}
+  const tw=QW[cfg.q],ref=Math.max.apply(null,items.map(i=>i.canvas.width));
+  let k=tw?Math.max(1,Math.round(tw/ref)):1,lowered=false,c;
+  for(;;){
+    const cvs=[];for(const it of items)cvs.push(await hiCanvas(it,k));
+    const pad=16*k,gap=24*k;
+    const W=Math.max.apply(null,cvs.map(x=>x.width))+pad*2;
+    const H=cvs.reduce((a,x)=>a+x.height+gap,pad*2-gap);
+    if(W*H>MAXPX&&k>1){k=Math.max(1,Math.floor(k*Math.sqrt(MAXPX/(W*H))));lowered=true;continue;}
+    c=document.createElement("canvas");c.width=W;c.height=H;
+    const ctx=c.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,W,H);
+    let y=pad;cvs.forEach(x=>{ctx.drawImage(x,Math.round((W-x.width)/2),y);y+=x.height+gap;});
+    break;
+  }
+  if(await writeImage(await blobOf(c),seq()+"_"+fkey(curType)+"_batch"+items.length+"."+ext())){
+    toast(tr("t_merged")+(lowered?" · "+tr("t_lower"):""));addHist();
+  }
 }
 async function shareFiles(list){
-  if(!list.length){toast("Isi kode dulu");return;}
+  if(!list.length){toast(tr("t_fill"));return;}
+  const blobs=[];
+  for(const it of list){
+    const cv=await hiCanvas(it,kFor(it.canvas.width,it.canvas.height,it.canvas.width));
+    blobs.push(await blobOf(cv));
+  }
   const pl=NP();
   if(pl.Share&&pl.Filesystem){
     try{
       const uris=[];
       for(let k=0;k<list.length;k++){
-        const r=await pl.Filesystem.writeFile({path:"share_"+(k+1)+"_"+safe(list[k].text)+".png",data:await toB64(await blobOf(list[k].canvas)),directory:"CACHE"});
+        const r=await pl.Filesystem.writeFile({path:"share_"+(k+1)+"_"+safe(list[k].text)+"."+ext(),data:await toB64(blobs[k]),directory:"CACHE"});
         uris.push(r.uri);
       }
       await pl.Share.share({title:"Barcode by aLeMaX",files:uris});addHist();
-    }catch(e){if(!/cancel/i.test(String((e&&e.message)||e)))toast("Gagal membagikan: "+((e&&e.message)||e));}
+    }catch(e){if(!/cancel/i.test(String((e&&e.message)||e)))toast(tr("t_fail",{e:(e&&e.message)||e}));}
     return;
   }
-  const files=[];
-  for(const it of list)files.push(new File([await blobOf(it.canvas)],safe(it.text)+".png",{type:"image/png"}));
+  const files=list.map((it,k)=>new File([blobs[k]],safe(it.text)+"."+ext(),{type:mime()}));
   try{
-    if(navigator.canShare&&navigator.canShare({files}))await navigator.share({files,title:"Barcode by aLeMaX"});
+    if(navigator.canShare&&navigator.canShare({files}))await navigator.share({files:files,title:"Barcode by aLeMaX"});
     else if(navigator.share)await navigator.share({title:"Barcode by aLeMaX",text:list.map(i=>i.text).join(", ")});
-    else{toast("Bagikan tidak tersedia, gunakan Simpan");return;}
+    else{toast(tr("t_noshare"));return;}
     addHist();
   }catch(e){}
-}
-function combined(){
-  const gap=24,pad=16;
-  const W=Math.max(...items.map(i=>i.canvas.width))+pad*2;
-  const H=items.reduce((a,i)=>a+i.canvas.height+gap,pad*2-gap);
-  const c=document.createElement("canvas");c.width=W;c.height=H;
-  const ctx=c.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,W,H);
-  let y=pad;
-  items.forEach(i=>{ctx.drawImage(i.canvas,Math.round((W-i.canvas.width)/2),y);y+=i.canvas.height+gap;});
-  return c;
 }
 
 /* ---------- Tampilan ---------- */
 function btn(label,icon,fn){
   const b=document.createElement("button");
   b.innerHTML='<svg class="i" style="width:18px;height:18px"><use href="#'+icon+'"/></svg>';
-  b.append(label);b.onclick=()=>{tap();fn();};return b;
+  b.append(label);b.onclick=e=>{e.stopPropagation();tap();fn();};return b;
 }
 function emptyEl(){
   const d=document.createElement("div");d.className="empty";
   d.innerHTML='<div class="art"><svg class="i"><use href="#i-bar"/></svg></div><h2></h2><p></p>';
-  d.querySelector("h2").textContent=isBatch()?"Mode Batch":"Siap membuat barcode";
-  d.querySelector("p").textContent=isBatch()
-    ?(curType.d==="2d"?"Ketik beberapa teks di bawah, satu per baris. Tiap baris jadi satu barcode.":"Ketik beberapa kode di bawah. Tiap bagian yang dipisah koma, titik, atau spasi jadi satu barcode.")
-    :"Ketik teks atau angka di kolom bawah, barcode muncul otomatis.";
+  d.querySelector("h2").textContent=tr(isBatch()?"empty_t_batch":"empty_t_single");
+  d.querySelector("p").textContent=tr(isBatch()?(curType.d==="2d"?"empty_p_batch2":"empty_p_batch1"):"empty_p_single");
   return d;
+}
+let vItem=null;
+function openViewer(it){
+  vItem=it;tap();
+  const c=document.createElement("canvas");c.width=it.canvas.width;c.height=it.canvas.height;
+  c.getContext("2d").drawImage(it.canvas,0,0);
+  $("vcard").innerHTML="";$("vcard").appendChild(c);$("viewer").classList.add("open");
+}
+function removeToken(text){
+  const a=splitBatch($("b").value).filter(x=>x!==text);
+  $("b").value=a.join(curType.d==="2d"?"\n":" ");grow();render();
 }
 let rTok=0;
 async function render(){
@@ -492,8 +1095,11 @@ async function render(){
   const pw=(+$("w").value-1)/5*100,ph=(+$("h").value-60)/240*100;
   $("w").style.setProperty("--p",pw+"%");$("h").style.setProperty("--p",ph+"%");
   $("wv").textContent=$("w").value;$("hv").textContent=$("h").value;
+  const pv=isBatch()?cfg.pv:(cfg.pv==="list"?"big":cfg.pv);
+  document.body.dataset.pv=pv;
   const raw=isBatch()?$("b").value:$("t").value;
   const list=isBatch()?parseBatch(raw):(raw?[raw]:[]);
+  const dups=isBatch()?parseBatch.dups:0;
   const made=[],bad=[];let lastErr=null;
   for(const s of list){
     const cv=document.createElement("canvas");
@@ -504,27 +1110,37 @@ async function render(){
   items=made;
   const out=$("out");out.innerHTML="";$("err").style.display="none";
   made.forEach((it,k)=>{
-    const card=document.createElement("div");card.className="bc";
-    if(isBatch()){const ix=document.createElement("div");ix.className="idx";ix.textContent="#"+(k+1);card.appendChild(ix);}
-    card.appendChild(it.canvas);
-    if(isBatch()){
-      const ac=document.createElement("div");ac.className="cacts";
-      ac.append(btn("Simpan","i-dl",()=>saveList([it])),btn("Bagikan","i-share",()=>shareFiles([it])));
-      card.appendChild(ac);
+    const card=document.createElement("div");
+    if(pv==="list"&&isBatch()){
+      card.className="bc row-l";
+      const lt=document.createElement("div");lt.className="lt";lt.innerHTML="<small></small><b></b>";
+      lt.firstChild.textContent="#"+(k+1);lt.lastChild.textContent=it.text;
+      const rm=document.createElement("button");rm.className="rm";rm.innerHTML='<svg class="i"><use href="#i-x"/></svg>';
+      rm.onclick=e=>{e.stopPropagation();tap();removeToken(it.text);};
+      card.append(lt,it.canvas,rm);
     }else{
-      const c=document.createElement("div");c.className="cap";c.textContent=curType.n+" · "+it.text.length+" karakter";card.appendChild(c);
+      card.className="bc";
+      if(isBatch()){const ix=document.createElement("div");ix.className="idx";ix.textContent="#"+(k+1);card.appendChild(ix);}
+      card.appendChild(it.canvas);
+      if(isBatch()){
+        const ac=document.createElement("div");ac.className="cacts";
+        ac.append(btn(tr("save"),"i-dl",()=>saveList([it])),btn(tr("share"),"i-share",()=>shareFiles([it])));
+        card.appendChild(ac);
+      }else{
+        const c=document.createElement("div");c.className="cap";c.textContent=tr("cap",{type:curType.n,n:it.text.length});card.appendChild(c);
+      }
     }
+    card.onclick=e=>{if(!e.target.closest("button"))openViewer(it);};
     out.appendChild(card);
   });
   if(!made.length&&!bad.length)out.appendChild(emptyEl());
   if(bad.length){
-    let msg;
-    if(lastErr&&lastErr.nolib)msg=errText(lastErr);
-    else msg=(isBatch()?"Dilewati: "+bad.join(", ")+". ":"")+errText(lastErr)+" (Format "+curType.n+": "+curType.h+")";
+    const msg=(lastErr&&lastErr.nolib)?errText(lastErr)
+      :(isBatch()?tr("err_skipped",{list:bad.join(", ")})+" ":"")+errText(lastErr)+" "+tr("err_fmt",{type:curType.n,hint:hint(curType)});
     $("err").textContent=msg;$("err").style.display="block";
   }
-  $("cnt").textContent=isBatch()&&made.length?made.length+" barcode":"";
-  $("saveLbl").textContent=isBatch()&&made.length>1?"Simpan semua":"Simpan";
+  $("cnt").textContent=isBatch()&&made.length?tr("count",{n:made.length})+(dups?" · "+tr("dup",{n:dups}):""):"";
+  $("saveLbl").textContent=tr(isBatch()&&made.length>1?"save_all":"save");
 }
 
 /* ---------- Riwayat ---------- */
@@ -535,13 +1151,14 @@ function saveHist(){try{localStorage.setItem("hist128",JSON.stringify(hist));}ca
 function addHist(){
   const v=(isBatch()?$("b").value:$("t").value).trim();if(!v)return;
   const b=isBatch(),t=curType.id;
-  hist=[{v:v,b:b,t:t},...hist.filter(h=>!(h.v===v&&h.b===b&&h.t===t))].slice(0,50);saveHist();
+  hist=[{v:v,b:b,t:t}].concat(hist.filter(h=>!(h.v===v&&h.b===b&&h.t===t))).slice(0,50);saveHist();
 }
 function renderHist(){
   const el=$("histv");el.innerHTML="";
   if(!hist.length){
     const d=document.createElement("div");d.className="empty";
-    d.innerHTML='<div class="art"><svg class="i"><use href="#i-clock"/></svg></div><h2>Belum ada riwayat</h2><p>Kode yang kamu simpan atau bagikan akan muncul di sini.</p>';
+    d.innerHTML='<div class="art"><svg class="i"><use href="#i-clock"/></svg></div><h2></h2><p></p>';
+    d.querySelector("h2").textContent=tr("hist_t");d.querySelector("p").textContent=tr("hist_p");
     el.appendChild(d);return;
   }
   hist.forEach((h,i)=>{
@@ -549,52 +1166,78 @@ function renderHist(){
     const o=document.createElement("button");o.className="open";
     o.innerHTML='<div class="ico"><svg class="i"><use href="#'+(h.b?"i-grid":"i-bar")+'"/></svg></div><div class="tx"><b></b><small></small></div>';
     o.querySelector("b").textContent=h.v.replace(/\s+/g," ");
-    o.querySelector("small").textContent=(h.b?"Batch":"Tunggal")+" · "+(TMAP[h.t]||TMAP.code128).n+" · ketuk untuk membuka";
+    o.querySelector("small").textContent=tr(h.b?"hist_batch":"hist_single")+" · "+(TMAP[h.t]||TMAP.code128).n+" · "+tr("hist_open");
     o.onclick=()=>{
       tap();curType=TMAP[h.t]||TMAP.code128;
       if(h.b)$("b").value=h.v;else $("t").value=h.v;
       grow();setMode(h.b?"batch":"single");
     };
-    const x=document.createElement("button");x.className="del";x.setAttribute("aria-label","Hapus");
+    const x=document.createElement("button");x.className="del";
     x.innerHTML='<svg class="i"><use href="#i-trash"/></svg>';
     x.onclick=()=>{tap();hist.splice(i,1);saveHist();};
     r.append(o,x);el.appendChild(r);
   });
-  const c=document.createElement("button");c.className="clrall";c.textContent="Hapus semua riwayat";
+  const c=document.createElement("button");c.className="clrall";c.textContent=tr("hist_clear");
   c.onclick=()=>{tap();hist=[];saveHist();};el.appendChild(c);
 }
 
-/* ---------- Jenis barcode: tampilan ---------- */
+/* ---------- Jenis barcode (tampilan) ---------- */
 function updateTypeUI(){
   $("typeName").textContent=curType.n;
-  $("t").placeholder="Contoh: "+curType.ex;
+  $("t").placeholder=tr("ph",{ex:curType.ex});
   $("b").placeholder=curType.ex+(curType.d==="2d"?"":", …");
-  $("fmt").textContent=isBatch()?(curType.d==="2d"?"Pisahkan: baris baru":"Pisahkan: koma, titik, spasi"):curType.h;
+  $("fmt").textContent=isBatch()?tr(curType.d==="2d"?"sep_2d":"sep_1d"):hint(curType);
+  $("typeBtn").setAttribute("aria-label",tr("ts_title"));
 }
 function setType(id){curType=TMAP[id]||TMAP.code128;updateTypeUI();render();}
 function setDefault(id){
   defType=id;try{localStorage.setItem("def128",id);}catch(e){}
-  toast("Default: "+TMAP[id].n);buildTypes($("tq").value);
+  toast(tr("t_default",{name:TMAP[id].n}));buildTypes($("tq").value);
 }
 function buildTypes(q){
   const el=$("tlist");el.innerHTML="";
   q=(q||"").trim().toLowerCase();let lastG="";
   TYPES.forEach(t=>{
-    if(q&&!(t.n.toLowerCase().includes(q)||t.id.toLowerCase().includes(q)||t.g.toLowerCase().includes(q)))return;
-    if(t.g!==lastG){const g=document.createElement("div");g.className="tg";g.textContent=t.g;el.appendChild(g);lastG=t.g;}
+    const gname=tr(t.g);
+    if(q&&!(t.n.toLowerCase().includes(q)||t.id.toLowerCase().includes(q)||gname.toLowerCase().includes(q)))return;
+    if(t.g!==lastG){const g=document.createElement("div");g.className="tg";g.textContent=gname;el.appendChild(g);lastG=t.g;}
     const r=document.createElement("div");r.className="trow"+(t.id===curType.id?" on":"");
     const s=document.createElement("button");s.className="sel";
     const b=document.createElement("b");b.textContent=t.n;
-    if(t.id===defType){const bd=document.createElement("span");bd.className="badge";bd.textContent="Default";b.appendChild(bd);}
-    const sm=document.createElement("small");sm.textContent=t.h;
+    if(t.id===defType){const bd=document.createElement("span");bd.className="badge";bd.textContent=tr("badge");b.appendChild(bd);}
+    const sm=document.createElement("small");sm.textContent=hint(t);
     s.append(b,sm);s.onclick=()=>{tap();setType(t.id);closeSheet("tsheet");};
     const st=document.createElement("button");st.className="st"+(t.id===defType?" def":"");
-    st.setAttribute("aria-label","Jadikan default: "+t.n);
+    st.setAttribute("aria-label",t.n+" ★");
     st.innerHTML='<svg class="i"><use href="#i-star"/></svg>';
     st.onclick=()=>{tap();setDefault(t.id);};
     r.append(s,st);el.appendChild(r);
   });
-  if(!el.children.length){const d=document.createElement("div");d.className="empty";d.innerHTML="<p>Tidak ada jenis yang cocok.</p>";el.appendChild(d);}
+  if(!el.children.length){const d=document.createElement("div");d.className="empty";d.innerHTML="<p></p>";d.firstChild.textContent=tr("ts_none");el.appendChild(d);}
+}
+
+/* ---------- Pengaturan & bahasa ---------- */
+function updateSettingsUI(){
+  document.querySelectorAll("#segQ button").forEach(b=>b.classList.toggle("on",b.dataset.v===cfg.q));
+  document.querySelectorAll("#segF button").forEach(b=>b.classList.toggle("on",b.dataset.v===cfg.f));
+  document.querySelectorAll("#segV button").forEach(b=>b.classList.toggle("on",b.dataset.v===cfg.pv));
+  $("sw").classList.toggle("on",cfg.wm!==false);
+  $("langCur").textContent=cfg.lang==="auto"?tr("lang_auto")+" ("+LNAME[curLang]+")":(LNAME[cfg.lang]||"");
+}
+function buildLangs(){
+  const el=$("llist");el.innerHTML="";
+  const mkRow=(code,name,sub)=>{
+    const b=document.createElement("button");b.className="lrow"+(cfg.lang===code?" on":"");
+    const sp=document.createElement("span");sp.textContent=name;
+    if(sub){const s=document.createElement("small");s.textContent=" "+sub;sp.appendChild(s);}
+    if(code!=="auto")sp.lang=code;
+    b.appendChild(sp);
+    if(cfg.lang===code)b.insertAdjacentHTML("beforeend",'<svg class="i"><use href="#i-check"/></svg>');
+    b.onclick=()=>{tap();cfg.lang=code;saveCfg();applyLang();closeSheet("lsheet");};
+    el.appendChild(b);
+  };
+  mkRow("auto",tr("lang_auto"),LNAME[sysLang()]);
+  LANGS.forEach(l=>mkRow(l[0],l[1]));
 }
 
 /* ---------- Kontrol ---------- */
@@ -606,30 +1249,47 @@ function setMode(m){
   if(m==="hist"){$("cnt").textContent="";renderHist();}else render();
 }
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{tap();setMode(b.dataset.m);});
-function grow(){const b=$("b");b.style.height="auto";b.style.height=Math.min(b.scrollHeight,120)+"px";}
+function grow(){const b=$("b");b.style.height="auto";b.style.height=Math.min(b.scrollHeight,84)+"px";}
 $("clear").onclick=()=>{tap();const f=isBatch()?$("b"):$("t");f.value="";grow();render();f.focus();};
 $("t").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("t").blur();}});
 $("save").onclick=()=>{tap();saveList(items);};
 $("share").onclick=()=>{tap();shareFiles(isBatch()?items:items.slice(0,1));};
-$("merge").onclick=async()=>{
-  tap();if(!items.length){toast("Isi kode dulu");return;}
-  if(await writeImage(await blobOf(combined()),seq()+"_"+fkey(curType)+"_batch"+items.length+".png")){toast("1 gambar gabungan "+where());addHist();}
-};
+$("merge").onclick=()=>{tap();mergeSave();};
+$("handle").onclick=()=>{tap();$("dock").classList.toggle("min");};
+
 function openSheet(id){tap();$("toast").classList.remove("show");const s=$(id);s.classList.add("open");s.setAttribute("aria-hidden","false");}
 function closeSheet(id){const s=$(id);s.classList.remove("open");s.setAttribute("aria-hidden","true");}
-$("cfg").onclick=()=>openSheet("sheet");$("scrim").onclick=()=>closeSheet("sheet");$("done").onclick=()=>closeSheet("sheet");
+$("cfg").onclick=()=>{updateSettingsUI();openSheet("sheet");};
+$("scrim").onclick=()=>closeSheet("sheet");$("done").onclick=()=>closeSheet("sheet");
 $("typeBtn").onclick=()=>{
   $("tq").value="";buildTypes("");openSheet("tsheet");
   setTimeout(()=>{const on=$("tlist").querySelector(".trow.on");if(on)on.scrollIntoView({block:"center"});},60);
 };
 $("tscrim").onclick=()=>closeSheet("tsheet");
 $("tq").addEventListener("input",()=>buildTypes($("tq").value));
-function saveCfg(){try{localStorage.setItem("cfg128",JSON.stringify({w:$("w").value,h:$("h").value}));}catch(e){}}
-try{const c=JSON.parse(localStorage.getItem("cfg128")||"null");if(c){$("w").value=c.w;$("h").value=c.h;}}catch(e){}
+$("goLang").onclick=()=>{buildLangs();openSheet("lsheet");};
+$("lscrim").onclick=()=>closeSheet("lsheet");
+$("goAbout").onclick=()=>openSheet("asheet");
+$("ascrim").onclick=()=>closeSheet("asheet");$("adone").onclick=()=>closeSheet("asheet");
+document.querySelectorAll("#segQ button").forEach(b=>b.onclick=()=>{tap();cfg.q=b.dataset.v;saveCfg();updateSettingsUI();});
+document.querySelectorAll("#segF button").forEach(b=>b.onclick=()=>{tap();cfg.f=b.dataset.v;saveCfg();updateSettingsUI();});
+document.querySelectorAll("#segV button").forEach(b=>b.onclick=()=>{tap();cfg.pv=b.dataset.v;saveCfg();updateSettingsUI();render();});
+$("swRow").onclick=()=>{tap();cfg.wm=!(cfg.wm!==false);saveCfg();updateSettingsUI();render();};
+$("vclose").onclick=()=>{$("viewer").classList.remove("open");};
+$("vsave").onclick=()=>{tap();if(vItem)saveList([vItem]);};
+$("vshare").onclick=()=>{tap();if(vItem)shareFiles([vItem]);};
 ["w","h"].forEach(id=>$(id).addEventListener("input",()=>{saveCfg();render();}));
 $("t").addEventListener("input",render);
 $("b").addEventListener("input",()=>{grow();render();});
-updateTypeUI();renderHist();render();
+
+/* ---------- Mulai ---------- */
+applyLang();
+window.__ready=true;
+updateTypeUI();renderHist();render();buildTypes("");buildLangs();updateSettingsUI();
+
+
+
+
 </script>
 </body>
 </html>
